@@ -1,5 +1,5 @@
 const roomSlice = (set) =>({
-    gameroom: null,
+    gameroom: 'sfsdafds',
     setGameroom:(value) => set(()=> ({gameroom:value})),
 })
 export default roomSlice

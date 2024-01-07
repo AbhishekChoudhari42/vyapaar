@@ -3,12 +3,16 @@ import React, { useContext, useEffect, useState } from 'react'
 import useStore from '@/store/store'
 import { v4 as uuid } from 'uuid'
 import { RealtimeContext } from './RealtimeProvider'
+import { useRouter } from 'next/navigation'
 const Gameboard = () => {
 
     const {users} = useContext(RealtimeContext)
 
     const { gameroom,user } = useStore()
-
+    const router = useRouter()
+    if(!gameroom){
+        router.push('./joinroom')
+    }
 
     return (
         <div className='w-[60%] bg-red-950'>
