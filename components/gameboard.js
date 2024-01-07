@@ -1,11 +1,9 @@
 import React from 'react'
 
-const Gameboard = () => {
+const gameboard = () => {
   return (
-    <div className='w-[100vh] h-screen bg-red-500'>
-        
-    </div>
+    <div>gameboard</div>
   )
 }
 
-export default Gameboard
+export default gameboard
