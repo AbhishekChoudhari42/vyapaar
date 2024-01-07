@@ -11,6 +11,7 @@ const page = () => {
     function joinroom(room){
         console.log(room)
         setGameroom(room)
+        localStorage.setItem('room',room)
         router.push('./game')
     }
     return (

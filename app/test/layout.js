@@ -1,9 +1,13 @@
 import './test.css'
+import RealtimeProvider from './test_components/RealtimeProvider'
 
 export default function RootLayout({ children }) {
-  return (
-    <main className='flex justify-center items-center h-screen w-screen'>
-      {children}
-    </main>
-  )
+
+    return (
+        <RealtimeProvider>
+            <main className='flex justify-center items-center h-screen w-screen'>
+                {children}
+            </main>
+        </RealtimeProvider>
+    )
 }

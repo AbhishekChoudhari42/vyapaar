@@ -1,5 +1,6 @@
+"use client"
 const roomSlice = (set) =>({
-    gameroom:null,
+    gameroom:localStorage.getItem('room'),
     setGameroom:(value) => set(()=> ({gameroom:value})),
 })
 export default roomSlice
