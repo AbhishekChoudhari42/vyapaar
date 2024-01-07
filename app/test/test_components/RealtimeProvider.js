@@ -10,7 +10,7 @@ const RealtimeProvider = ({children}) => {
     
     
     const {user,gameroom,setGameroom,addMessage} = useStore()
-    const room = gameroom || localStorage.getItem('room')
+    const room = gameroom || window.localStorage.getItem('room')
 
     const channel = supabase.channel(room)
     
