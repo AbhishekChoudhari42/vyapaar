@@ -9,9 +9,10 @@ export const RealtimeContext = createContext({users:{},error:false})
 const RealtimeProvider = ({children}) => {
     
     
-    const {user,gameroom,addMessage} = useStore()
+    const {user,gameroom,setGameroom,addMessage} = useStore()
+    const room = gameroom || localStorage.getItem('room')
 
-    const channel = supabase.channel(gameroom)
+    const channel = supabase.channel(room)
     
     const [users,setUsers] = useState({})
     const [error,setError] = useState(false)
@@ -22,9 +23,9 @@ const RealtimeProvider = ({children}) => {
     
     useEffect(() => {
         
-        const channel = supabase.channel(gameroom)
+        const channel = supabase.channel(room)
         
-        if(gameroom && channel){
+        if(room && channel){
 
         const userStatus = {
             user,
