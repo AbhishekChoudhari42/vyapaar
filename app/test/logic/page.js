@@ -25,9 +25,8 @@ const page = () => {
 
         return arr
     }
-    const noOfTiles = 20
+    const noOfTiles = 40
     const tiles = new Array(noOfTiles).fill(0);
-
     const [currentUser, setCurrentUser] = useState(0)
     const [dice,setDice] = useState(Math.ceil(0))
     const [diceShow,setDiceShow] = useState(false)
@@ -47,24 +46,58 @@ const page = () => {
             setDiceShow(false)
             setDice(increment)
             setUsers(newUsersState)
+            setCurrentUser((currentUser + 1)%4)
         }, 2000);
 
-        setCurrentUser((currentUser + 1)%4)
     }
+    const tiles1 = tiles.slice(0,11)
+    const tiles2 = tiles.slice(11,20)
+    const tiles3 = tiles.slice(20,31)
+    const tiles4 = tiles.slice(31,40)
+
     return (
-        <div>
-            <button className='bg-white text-black' onClick={()=>{rollDice()}}>roll dice</button>
-            current player is :- {currentUser}
-            dice : {dice}
-            {diceShow && <Dice dice={dice}/>} 
-            <div className='w-screen bg-blue-950 h-[200px] flex justify-between'>
+        <div className='w-screen h-screen bg-violet-950 flex justify-center items-center'>
+
+        <div className='w-[550px] h-[550px] flex flex-col'>
+            <div className='w-full bg-blue-950 flex justify-between'>    
                 {
-                    tiles.map((el, index) => {
+                    tiles1.map((el, index) => {
                         return <Tile key={uuid()} players={getPlayersArrayAtPosition(index)} />
                     })
                 }
             </div>
+            <div className='flex justify-between flex-grow items-center relative'>
+            <div className='flex  flex-col-reverse '>
+                {
+                    tiles4.map((el, index) => {
+                        return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 31)} />
+                    })
+                }
+            </div>
+            <div>
+            <button className='bg-white text-black rounded-md px-2 absolute top-2 left-[50%] translate-x-[-50%]' onClick={()=>{rollDice()}}>roll dice</button>
+            <div className='absolute top-12 left-[50%] translate-x-[-50%]'>
+               Current Player : {currentUser} 
+            </div>
+                {diceShow && <Dice dice={dice}/>} 
+            </div>
+            <div className='flex flex-col '>
+                {
+                    tiles2.map((el, index) => {
+                        return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 11)} />
+                    })
+                }
+            </div>
+            </div>
+            <div className='w-full bg-blue-950 flex flex-row-reverse justify-between'>    
+                {
+                    tiles3.map((el, index) => {
+                        return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 20)} />
+                    })
+                }
+            </div>
         </div>
+    </div>
     )
 }
 
