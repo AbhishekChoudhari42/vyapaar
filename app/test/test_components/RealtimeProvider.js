@@ -39,20 +39,20 @@ const RealtimeProvider = ({children}) => {
             Object.keys(newState).forEach(id => {
                 usersObject = { ...usersObject, [id]: { ...newState[id][0] } }
             })
-            console.log(usersObject)
+            // console.log(usersObject)
             setUsers(usersObject)
         })
         .on('presence', { event: 'join' },
 
                 ({ key, newPresences }) =>
                 {
-                    console.log('join', key, newPresences)
+                    // console.log('join', key, newPresences)
                 }
             )
         .on('presence', { event: 'leave' },
 
                 ({ key, leftPresences }) => {
-                    console.log('leave', key, leftPresences)
+                    // console.log('leave', key, leftPresences)
                 }
         )
         .on('broadcast',

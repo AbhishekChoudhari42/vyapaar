@@ -22,7 +22,7 @@ const Chat = () => {
     return (
         <div className='h-full w-[20%]'>
 
-            <input className='bg-black' type="text" onChange={(e) => setCurrentMessage(e.target.value)} />
+            <input className='bg-blue-500' type="text" onChange={(e) => setCurrentMessage(e.target.value)} />
             <button onClick={() => broadcast(currentMessage, channel)} className='bg-black border '>broadcast event</button>
             <div>
                 {

@@ -5,6 +5,7 @@ import { v4 as uuid } from 'uuid'
 import Dice from './dice'
 import tableData from './tableData'
 import LeaderBoard from './leaderboard'
+import supabase from '@/supabase/client'
 
 const page = () => {
 
@@ -31,7 +32,6 @@ const page = () => {
         },
     }
 
-
     const [users,setUsers] = useState(data);
 
     const getPlayersArrayAtPosition = (pos) => {
@@ -49,42 +49,50 @@ const page = () => {
     const [currentUser, setCurrentUser] = useState(0)
     const [dice,setDice] = useState(Math.ceil(0))
     const [diceShow,setDiceShow] = useState(false)
-    useEffect(()=>{
-        setDice(Math.ceil(Math.random()*6))
-    },[])
     
     //Added timeoutActive to hide the button during timeout
     const [timeoutActive, setTimeoutActive] = useState(false)
     //End Turn
     const [endTurn, setEndTurn] = useState(false)
-    const rollDice = () =>{
+    
+
+    const rollDice = async () => {
         if(endTurn){
             setCurrentUser((currentUser + 1)%4)
             setEndTurn(false)
         }
         else{
-            if (timeoutActive) {
+            {
+                if (timeoutActive) {
                 return;
             }
-    
-            let newUsersState = users
-            let currentPos = users[currentUser].pos
-            let increment = Math.ceil(Math.random()*6)
-    
-            currentPos = (currentPos + dice)%noOfTiles
-            newUsersState[currentUser].pos = currentPos
-    
-            setDiceShow(true)
-            setTimeout(() => {
-                setDiceShow(false)
-                setDice(increment)
-                setUsers(newUsersState)
+        
+            try {
+                const response = await fetch("http://localhost:3000/api/dice");
+                const { diceRoll1 } = await response.json();
+                console.log(diceRoll1)
+                let newUsersState = users
+                let currentPos = users[currentUser].pos
+                let increment = diceRoll1;
+        
+                currentPos = (currentPos + increment) % noOfTiles;
+                newUsersState[currentUser].pos = currentPos;
+                setDice(diceRoll1);
+                setDiceShow(true);
+                setTimeout(() => {
+                    setDiceShow(false);
+                    setUsers(newUsersState);
+                    setTimeoutActive(false);
+                }, 2000);
+        
+                setTimeoutActive(true);
+                setEndTurn(true);
+            } catch (error) {
+                console.error('Error fetching dice roll:', error);
                 setTimeoutActive(false);
-            }, 2000);
-    
-            setTimeoutActive(true)
-            setEndTurn(true)
-        }
+                setEndTurn(true);
+            }}
+        };
     }
 
     //Stores and changes the boarddata
@@ -113,6 +121,33 @@ const page = () => {
 
         setEndTurn(true);
     }
+
+    useEffect(()=>{
+
+        const runBroadcast = async () =>{
+            const myChannel = supabase.channel('room-2', {
+                config: {
+                  broadcast: { self: true },
+                },
+              })
+              
+              myChannel.on(
+                'broadcast',
+                { event: 'test-my-messages' },
+                (payload) => console.log("Dice roll through broadcast: ",payload.payload.message)
+              )
+              
+              myChannel.subscribe((status) => {
+                if (status !== 'SUBSCRIBED') { return }
+                myChannel.send({
+                  type: 'broadcast',
+                  event: 'test-my-messages',
+                  payload: { message: dice },
+                })
+              })
+        }
+          runBroadcast()
+    },[dice])
 
     const tiles1 = tiles.slice(0,11)
     const tiles2 = tiles.slice(11,20)

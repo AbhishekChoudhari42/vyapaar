@@ -1,5 +1,5 @@
 const Tile = ({players}) =>{
-    console.log(players)
+    // console.log(players)
     return <div className='relative w-[50px] h-[50px] bg-black/80 border border-violet-950  text-white'>
         <div className="absolute top-[0px] left-[0px] ">
             {players?.includes('0') && <div className='bg-pink-500 w-[25px] h-[25px] flex justify-center'>0</div>}
