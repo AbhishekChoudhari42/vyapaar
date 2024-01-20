@@ -6,6 +6,13 @@ import Dice from './dice'
 import tableData from './tableData'
 import LeaderBoard from './leaderboard'
 import supabase from '@/supabase/client'
+// import axios from 'axios'
+
+// if(process.env.HOST == 'DEV'){
+//     console.log("DEVV")
+// }else{
+//     console.log("uhsudh")
+// }
 
 const page = () => {
 
@@ -68,7 +75,14 @@ const page = () => {
             }
         
             try {
-                const response = await fetch("/api/dice");
+                // const response = await fetch("/api/dice");
+                const response = await fetch("/api/dice", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({}), 
+                });
                 const { diceRoll1 } = await response.json();
                 console.log(diceRoll1)
                 let newUsersState = users
