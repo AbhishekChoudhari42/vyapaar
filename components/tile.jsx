@@ -1,16 +1,30 @@
+import { v4 } from "uuid"
+
+const colors = [
+    'bg-pink-500',
+    'bg-red-500',
+    'bg-blue-500',
+    'bg-green-500'
+]
+
 const Tile = ({players}) =>{
-    return <div className='relative w-[50px] h-[50px] bg-black/80 border border-violet-950/80  text-white'>
-        <div className="absolute top-[0px] left-[0px] ">
-            {players?.includes('0') && <div className='bg-pink-500 player'></div>}
+    return <div className='relative w-[50px] h-[50px] bg-black/80 border-[1px] border-white/20 flex justify-between  text-white'>
+        
+        <div className="flex flex-col justify-between h-full"> 
+        {
+            players.map((el,index)=>{
+                if(index%2 == 1)
+                return <div key={v4()} className={`player ${colors[parseInt(el)]}`}></div>
+            })
+        }
         </div>
-        <div className="absolute top-[0px] right-[0px]">
-            {players?.includes('1') && <div className='bg-red-500 player'></div>}
-        </div>
-        <div className="absolute bottom-[0px] left-[0px]">
-            {players?.includes('2') && <div className='bg-blue-500 player'></div>}
-        </div>
-        <div className="absolute bottom-[0px] right-[0px]">
-            {players?.includes('3') && <div className='bg-green-500 player'></div>}
+        <div className="flex flex-col justify-between h-full"> 
+        {
+            players.map((el,index)=>{
+                if(index%2 == 0)
+                return <div key={v4()} className={`player ${colors[parseInt(el)]}`}></div>
+            })
+        }
         </div>
     </div>
 }

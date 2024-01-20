@@ -8,8 +8,7 @@ export const RealtimeContext = createContext({users:{},error:false})
 
 const RealtimeProvider = ({children}) => {
     
-    
-    const {user,gameroom,addMessage} = useStore()
+    const {user,gameroom,setGameroom,addMessage} = useStore()
     const router = useRouter()
     
     const channel = supabase.channel(gameroom)
@@ -38,7 +37,6 @@ const RealtimeProvider = ({children}) => {
             Object.keys(newState).forEach(id => {
                 usersObject = { ...usersObject, [id]: { ...newState[id][0] } }
             })
-            // console.log(usersObject)
             setUsers(usersObject)
         })
         .on('presence', { event: 'join' },

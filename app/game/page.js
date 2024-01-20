@@ -1,7 +1,21 @@
+"use client"
 import Gameboard from '@/components/gameboard'
-import React from 'react'
+import { useRouter } from 'next/navigation'
+import React, { useEffect } from 'react'
+import useStore from '@/store/store'
 
 const page = () => {
+
+  const router = useRouter();
+  const { gameroom } = useStore()
+  
+  useEffect(()=>{
+    if(!gameroom || !localStorage.getItem('roomId')){
+      router.push('./room')
+    }
+  },[])
+  
+  
   return (
     <div className='w-full h-screen flex justify-between items-center'>
       <div className='flex-1 bg-red-950 h-screen'>

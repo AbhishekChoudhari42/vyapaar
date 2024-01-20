@@ -11,5 +11,5 @@ body {
 }
 
 .player{
-  @apply w-[12px] h-[12px] flex justify-center;
+  @apply w-[10px] h-[10px] flex justify-center;
 }
