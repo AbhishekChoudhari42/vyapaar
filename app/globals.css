@@ -9,3 +9,7 @@ body {
   max-width: 1300px;
   background-color: black;
 }
+
+.player{
+  @apply w-[12px] h-[12px] flex justify-center;
+}
