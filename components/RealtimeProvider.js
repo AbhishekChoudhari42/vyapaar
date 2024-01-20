@@ -30,7 +30,7 @@ const RealtimeProvider = ({children}) => {
             user,
             position: 0
         }
-
+        
         channel.on('presence', { event: 'sync' }, () => {
             const newState = channel.presenceState()
             let usersObject = {}
