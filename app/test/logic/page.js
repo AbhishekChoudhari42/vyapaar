@@ -68,7 +68,7 @@ const page = () => {
             }
         
             try {
-                const response = await fetch("http://localhost:3000/api/dice");
+                const response = await fetch("/api/dice");
                 const { diceRoll1 } = await response.json();
                 console.log(diceRoll1)
                 let newUsersState = users
