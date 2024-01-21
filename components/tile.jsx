@@ -14,7 +14,7 @@ const Tile = ({players}) =>{
         {
             players.map((el,index)=>{
                 if(index%2 == 1)
-                return <div key={v4()} className={`player ${colors[parseInt(el)]}`}></div>
+                return <div key={v4()} className={`player ${colors[index]}`}></div>
             })
         }
         </div>
@@ -22,7 +22,7 @@ const Tile = ({players}) =>{
         {
             players.map((el,index)=>{
                 if(index%2 == 0)
-                return <div key={v4()} className={`player ${colors[parseInt(el)]}`}></div>
+                return <div key={v4()} className={`player ${colors[index]}`}></div>
             })
         }
         </div>

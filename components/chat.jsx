@@ -6,15 +6,16 @@ const Chat = () => {
  const router = useRouter()
   const leaveRoom = () => {
     localStorage.clear('roomId')
+    localStorage.clear('user')
     router.push('/room')
   }
 
   const {gameroom,user} = useStore();
   return (
     <div className='p-2'>
-        <p className='text-white'>Room : {gameroom}</p>
-        <p className='text-white'>User : {user}</p>
-        <button onClick={()=>{leaveRoom()}} className='red-button w-full'>◀ Leave Room</button>
+        <p className='text-white text-sm'>Room : {gameroom}</p>
+        <p className='text-white text-sm'>User : {user}</p>
+        <button onClick={()=>{leaveRoom()}} className='red-button w-full text-sm'>◀ Leave Room</button>
     </div>
   )
 }

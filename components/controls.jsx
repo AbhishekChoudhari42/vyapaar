@@ -1,11 +1,24 @@
 "use client"
 import React, { useState } from 'react'
+import supabase from '../supabase/client'
+import useStore from '@/store/store'
 
 const Controls = () => {
 
     const [ gamecontrol, setGameControl ] = useState({ currentTurn: true , diceRolling:false })
+    const {gameroom,user , users , setUsers} = useStore();
 
-    const rollDice = (setGamecontrol) => {
+    const rollDice = async (setGamecontrol) => {
+
+        const isGamePresent = await supabase.from('game').select('*').match({admin:user,roomid:gameroom})
+        if(isGamePresent.data){
+            const currentGameState = JSON.parse(isGamePresent?.data[0]?.state)
+            const addUserToState = await supabase.from('game').update({state:JSON.stringify({...currentGameState,['aaa']:{pos:Math.floor(Math.random()*20)}})}).eq('admin',user)
+            console.log(addUserToState,'addUserToState')
+            console.log(currentGameState,'currentGameState')
+            setUsers(currentGameState)
+        }
+        
         // API call with username details
         // returns random number 
         // broadcast the number with message "user __ got {random number}"

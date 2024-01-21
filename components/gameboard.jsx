@@ -4,15 +4,26 @@ import Tile from './tile'
 import { v4 as uuid } from 'uuid'
 import LeaderBoard from './leaderboard'
 import supabase from '@/supabase/client'
-import { userData } from '@/constants/users'
 import { getPlayersArrayAtPosition } from '@/utils/game_lib'
 import Controls from './controls'
+import useStore from '@/store/store'
 
 const page = () => {
 
-  const [users, setUsers] = useState(userData);
+  const {users, setUsers} = useStore();
   const noOfTiles = 40
-  const tiles = new Array(noOfTiles).fill(0);
+  const [tiles,setTiles] = useState(new Array(noOfTiles).fill(0))
+
+
+
+
+  useEffect(()=>{
+    console.log('re i gb')
+    console.log("rerender",users);
+    setTiles(new Array(noOfTiles).fill(0))
+  },[users])
+
+
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
   const tiles3 = tiles.slice(20, 31)
@@ -20,9 +31,9 @@ const page = () => {
 
   return (
     <div className='w-[550px] h-[550px] flex flex-col'>
-
+      {JSON.stringify(users)}
       <div className='w-full flex justify-between'>
-        {
+        { users &&
           tiles1.map((el, index) => {
             return <Tile key={uuid()} players={getPlayersArrayAtPosition(index, users)} />
           })
@@ -32,7 +43,7 @@ const page = () => {
       <div className='flex justify-between flex-grow relative'>
         <div className='flex  flex-col-reverse justify-between'>
           {
-            tiles4.map((el, index) => {
+            users && tiles4.map((el, index) => {
               return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 31, users)} />
             })
           }
@@ -42,7 +53,7 @@ const page = () => {
 
         <div className='flex flex-col justify-between'>
           {
-            tiles2.map((el, index) => {
+            users && tiles2.map((el, index) => {
               return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 11, users)} />
             })
           }
@@ -51,7 +62,7 @@ const page = () => {
 
       <div className='w-full flex flex-row-reverse justify-between'>
         {
-          tiles3.map((el, index) => {
+          users && tiles3.map((el, index) => {
             return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 20, users)} />
           })
         }
