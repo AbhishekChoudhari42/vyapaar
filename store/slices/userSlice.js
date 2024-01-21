@@ -1,6 +1,5 @@
-"use client"
-import { v4 as uuid } from "uuid"
 const userSlice = (set) =>({
-    user:uuid().split('-')[0],
+    user:null,
+    setUser:(value) => set(()=> ({user:value})),
 })
 export default userSlice

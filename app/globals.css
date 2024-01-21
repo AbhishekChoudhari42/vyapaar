@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+  background-color: black;
+  display: flex;
+  justify-content: center;
+}
+
 *{
   color: white;
 }
@@ -11,5 +17,20 @@ body {
 }
 
 .player{
-  @apply w-[12px] h-[12px] flex justify-center;
+  @apply w-[10px] h-[10px] flex justify-center
+}
+
+.white-button{
+  @apply bg-white text-black px-4 py-1 rounded-md
+}
+.red-button{
+  @apply bg-red-500 text-white px-4 py-1 rounded-md
+}
+
+.input-style{
+  @apply  p-1 rounded-md border-[1px] border-white/30 bg-black text-white
+}
+
+.fade{
+  @apply opacity-10
 }
