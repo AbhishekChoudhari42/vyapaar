@@ -9,11 +9,10 @@ export const RealtimeContext = createContext({users:{},error:false})
 
 const RealtimeProvider = ({children}) => {
     
-    
     const {user,gameroom,setGameroom,addMessage} = useStore()
     const router = useRouter()
     
-    const channel = supabase.channel(gameroom)
+    const channel = supabase.channel('gameroom')
     
     const [users,setUsers] = useState({})
     const [error,setError] = useState(false)
@@ -24,9 +23,9 @@ const RealtimeProvider = ({children}) => {
     
     useEffect(() => {
         
-        const channel = supabase.channel(gameroom)
+        const channel = supabase.channel('gameroom')
         
-        if(gameroom && channel){
+        if(channel){
 
         const userStatus = {
             user,
@@ -58,6 +57,25 @@ const RealtimeProvider = ({children}) => {
         .on('broadcast',
             { event: 'message' },
             (data) => messageReceived(data)
+        )
+        .on(
+            'broadcast',
+            { event: 'dice' },
+            (payload) => {console.log("broadcast dice: ",payload.payload.message)}
+        )
+        .on(
+            'broadcast',
+            { event: 'state' },
+            (payload) => {console.log("broadcast state: ",payload.payload.message)}
+        )
+        .on(
+            'postgres_changes',
+            {
+              schema: 'public',
+              event: '*',
+              table:'game'  
+            },
+            (payload) => {console.log("Updated changes: ",payload)}
         )
         
         const sub = channel.subscribe(async (status) => {

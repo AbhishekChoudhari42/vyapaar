@@ -1,12 +1,14 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useContext } from 'react'
 import Tile from './tile'
 import { v4 as uuid } from 'uuid'
 import Dice from './dice'
 import tableData from './tableData'
 import LeaderBoard from './leaderboard'
 import supabase from '@/supabase/client'
-// import axios from 'axios'
+import axios from 'axios'
+import { RealtimeContext } from '../test_components/RealtimeProvider'
+import { data, noOfTiles } from '@/constants/users'
 
 // if(process.env.HOST == 'DEV'){
 //     console.log("DEVV")
@@ -15,29 +17,29 @@ import supabase from '@/supabase/client'
 // }
 
 const page = () => {
-
-    const data = {
-        0: { 
-            pos: 0,
-            balance:1500,
-            properties:[]    
-        },
-        1: { 
-            pos: 0,
-            balance:1500,
-            properties:[]
-        },
-        2: { 
-            pos: 0,
-            balance:1500,
-            properties:[]
-        },
-        3: { 
-            pos: 0,
-            balance:1500,
-            properties:[] 
-        },
-    }
+    const { channel } = useContext(RealtimeContext)
+    // const data = {
+    //     0: { 
+    //         pos: 0,
+    //         balance:1500,
+    //         properties:[]
+    //     },
+    //     1: { 
+    //         pos: 0,
+    //         balance:1500,
+    //         properties:[]
+    //     },
+    //     2: { 
+    //         pos: 0,
+    //         balance:1500,
+    //         properties:[]
+    //     },
+    //     3: { 
+    //         pos: 0,
+    //         balance:1500,
+    //         properties:[] 
+    //     },
+    // }
 
     const [users,setUsers] = useState(data);
 
@@ -62,7 +64,26 @@ const page = () => {
     //End Turn
     const [endTurn, setEndTurn] = useState(false)
     
+    const broadcastDice = async (dice) =>{
 
+        channel.send({
+            type: 'broadcast',
+            event: 'dice',
+            payload: { message: dice },
+        })
+
+    }
+
+    const broadcastState = async (state) =>{
+
+        channel.send({
+            type: 'broadcast',
+            event: 'state',
+            payload: { message: state },
+        })
+
+    }
+    
     const rollDice = async () => {
         if(endTurn){
             setCurrentUser((currentUser + 1)%4)
@@ -75,22 +96,18 @@ const page = () => {
             }
         
             try {
-                // const response = await fetch("/api/dice");
-                const response = await fetch("/api/dice", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({}), 
-                });
-                const { diceRoll1 } = await response.json();
+                const res = await axios.post('/api/dice',{})
+                const { diceRoll1 } = await res.data;
                 console.log(diceRoll1)
-                let newUsersState = users
-                let currentPos = users[currentUser].pos
                 let increment = diceRoll1;
-        
                 currentPos = (currentPos + increment) % noOfTiles;
-                newUsersState[currentUser].pos = currentPos;
+
+                const res2 = await axios.post('/api/playerPosition',{users,currentUser})
+                // let newUsersState = users
+                // let currentPos = users[currentUser].pos
+
+                // newUsersState[currentUser].pos = currentPos;
+
                 setDice(diceRoll1);
                 setDiceShow(true);
                 setTimeout(() => {
@@ -101,6 +118,9 @@ const page = () => {
         
                 setTimeoutActive(true);
                 setEndTurn(true);
+                broadcastDice(diceRoll1);
+                broadcastState(newUsersState);
+
             } catch (error) {
                 console.error('Error fetching dice roll:', error);
                 setTimeoutActive(false);
@@ -112,7 +132,7 @@ const page = () => {
     //Stores and changes the boarddata
     const [BoardData,setBoardData] = useState(tableData);
     //Handles the buying of properties
-    const handleTransaction = () =>{
+    const handleTransaction = async () =>{
         const currPlayerPos = users[currentUser].pos
         const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost
         const propBought = BoardData[currPlayerPos].name
@@ -137,31 +157,11 @@ const page = () => {
     }
 
     useEffect(()=>{
-
-        const runBroadcast = async () =>{
-            const myChannel = supabase.channel('room-2', {
-                config: {
-                  broadcast: { self: true },
-                },
-              })
-              
-              myChannel.on(
-                'broadcast',
-                { event: 'test-my-messages' },
-                (payload) => console.log("Dice roll through broadcast: ",payload.payload.message)
-              )
-              
-              myChannel.subscribe((status) => {
-                if (status !== 'SUBSCRIBED') { return }
-                myChannel.send({
-                  type: 'broadcast',
-                  event: 'test-my-messages',
-                  payload: { message: dice },
-                })
-              })
+        const updateState = async () =>{
+            const res1 = await axios.post('/api/setUsers',{users, admin:"player1"})
         }
-          runBroadcast()
-    },[dice])
+        updateState();
+    },[users])
 
     const tiles1 = tiles.slice(0,11)
     const tiles2 = tiles.slice(11,20)
@@ -229,3 +229,5 @@ const page = () => {
 }
 
 export default page
+
+//positon and broadcast using axios

@@ -39,6 +39,13 @@ const page = () => {
     }
   };
 
+  const testData = {
+    id: 1,
+    name: "abc",
+    age: 29
+  }
+
+  const [testState, setTestState] = useState(testData)
   useEffect(()=>{
     const listen = async () =>{
       const changes = supabase
@@ -46,16 +53,41 @@ const page = () => {
       .on(
         'postgres_changes',
         {
-          schema: 'public', // Subscribes to the "public" schema in Postgres
-          event: '*',       // Listen to all changes
+          schema: 'public',
+          event: 'UPDATE',  
         },
-        (payload) => console.log("Payload: ",payload)
-      )
+        (payload) => {
+          setTestState(payload.new)
+          console.log("Payload: ",payload)
+      })
       .subscribe()
     }
 
     listen()
   },[])
+
+  const handleStateUpdate= async () =>{
+    try {
+      const updatedData = {
+        name: dataToUpdate.name,
+        age: dataToUpdate.age,
+      }
+      const { data, error } = await supabase
+        .from('update_test')
+        .update(updatedData)
+        .match({ id: dataToUpdate.id });
+  
+      if (error) {
+        console.error('Error updating data:', error.message);
+      } else {
+        console.log('Data updated successfully:', data);
+        // setTestState()
+      }
+    } catch (error) {
+      console.error('Error updating data:', error.message);
+    }
+  }
+
 
   return (
     <div>
@@ -83,8 +115,36 @@ const page = () => {
       </label>
       <br />
       <button onClick={handleUpdate}>Update Data</button>
+      <br/>
+      <button onClick={handleStateUpdate}>Handle state update</button>
+      <br/>
+      <div>
+      {/* {testData} */}
+        {Object.entries(testState).map(([key, value]) => (
+          <p key={key}>
+            <strong>{key}:</strong> {value}
+          </p>
+        ))}
+      </div>
     </div>
   );
 };
 
 export default page;
+
+
+// {
+//   "schema": "public",
+//   "table": "update_test",
+//   "commit_timestamp": "2024-01-20T16:10:27.097Z",
+//   "eventType": "UPDATE",
+//   "new": {
+//       "age": 54,
+//       "id": 1,
+//       "name": "knk"
+//   },
+//   "old": {
+//       "id": 1
+//   },
+//   "errors": null
+// }

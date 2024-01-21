@@ -1,4 +1,4 @@
-export const userData = {
+export const data = {
     0: { 
         pos: 0,
         balance:1500,
@@ -20,3 +20,5 @@ export const userData = {
         properties:[] 
     },
 }
+
+export const noOfTiles = 40;
