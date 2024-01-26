@@ -2,7 +2,7 @@ import supabase from "@/supabase/client";
 
 export async function POST(request){
     const {admin,users} = await request.json();
-    console.log(users, "ekrgk")
+    // console.log(users, "ekrgk")
     try {
         const { data, error } = await supabase
         .from('game')
@@ -18,10 +18,10 @@ export async function POST(request){
         }
 
         return new Response("Successful");
-      } 
-      catch (error) {
+    } 
+    catch (error) {
         console.log("failed: ", error.message)
         return new Response("Unsuccessful");
-      }
+    }
 
 }

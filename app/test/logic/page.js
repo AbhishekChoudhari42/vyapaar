@@ -18,28 +18,6 @@ import { data, noOfTiles } from '@/constants/users'
 
 const page = () => {
     const { channel } = useContext(RealtimeContext)
-    // const data = {
-    //     0: { 
-    //         pos: 0,
-    //         balance:1500,
-    //         properties:[]
-    //     },
-    //     1: { 
-    //         pos: 0,
-    //         balance:1500,
-    //         properties:[]
-    //     },
-    //     2: { 
-    //         pos: 0,
-    //         balance:1500,
-    //         properties:[]
-    //     },
-    //     3: { 
-    //         pos: 0,
-    //         balance:1500,
-    //         properties:[] 
-    //     },
-    // }
 
     const [users,setUsers] = useState(data);
 
@@ -53,7 +31,7 @@ const page = () => {
 
         return arr
     }
-    const noOfTiles = 40
+
     const tiles = new Array(noOfTiles).fill(0);
     const [currentUser, setCurrentUser] = useState(0)
     const [dice,setDice] = useState(Math.ceil(0))
@@ -99,20 +77,17 @@ const page = () => {
                 const res = await axios.post('/api/dice',{})
                 const { diceRoll1 } = await res.data;
                 console.log(diceRoll1)
-                let increment = diceRoll1;
-                currentPos = (currentPos + increment) % noOfTiles;
 
-                const res2 = await axios.post('/api/playerPosition',{users,currentUser})
-                // let newUsersState = users
-                // let currentPos = users[currentUser].pos
+                const res1 = await axios.post('/api/playerPosition',{currentUser, users, diceRoll1});
+                const { newUsersState } =  res1.data
 
-                // newUsersState[currentUser].pos = currentPos;
-
+                setUsers(newUsersState);
                 setDice(diceRoll1);
                 setDiceShow(true);
+                
+                //To hide the dice block
                 setTimeout(() => {
                     setDiceShow(false);
-                    setUsers(newUsersState);
                     setTimeoutActive(false);
                 }, 2000);
         
@@ -133,23 +108,24 @@ const page = () => {
     const [BoardData,setBoardData] = useState(tableData);
     //Handles the buying of properties
     const handleTransaction = async () =>{
-        const currPlayerPos = users[currentUser].pos
-        const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost
-        const propBought = BoardData[currPlayerPos].name
+
+        const res = await axios.post('/api/buyProp',{users, currentUser, BoardData})
+        const {currPlayerPos,currentUser:updatedCurrentUser,currPlayerBalance,propBought } = await res.data;
+
         setBoardData((prevBoardData)=>({
             ...prevBoardData, [currPlayerPos]:{
                 ...prevBoardData[currPlayerPos],
                 buyable: false,
-                owner: currentUser
+                owner: updatedCurrentUser
             }
         }))
 
         setUsers((prevUsers) => ({
             ...prevUsers,
-            [currentUser]: {
-                ...prevUsers[currentUser],
+            [updatedCurrentUser]: {
+                ...prevUsers[updatedCurrentUser],
                 balance: currPlayerBalance,
-                properties: [...prevUsers[currentUser].properties, propBought],
+                properties: [...prevUsers[updatedCurrentUser].properties, propBought],
             },
         }));
 
@@ -229,5 +205,3 @@ const page = () => {
 }
 
 export default page
-
-//positon and broadcast using axios
