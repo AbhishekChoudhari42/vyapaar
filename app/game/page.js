@@ -5,6 +5,7 @@ import React, { useEffect } from 'react'
 import useStore from '@/store/store'
 import Chat from '@/components/chat'
 import supabase from '@/supabase/client'
+import axios from 'axios'
 
 const page = () => {
 
@@ -23,8 +24,9 @@ const page = () => {
   },[])
 
   useEffect(()=>{
+    // const roomId = ''
     const getInitialState = async () => {
-      const res = await supabase.from('game').select('*').match({roomid:'room1',admin:'aaa'})
+      // const res = await axios.get(`/room/getRoom/${roomId}`) 
       if(res?.data?.length > 0){
         console.log(JSON.parse(res.data[0].state))
         return JSON.parse(res.data[0].state)
