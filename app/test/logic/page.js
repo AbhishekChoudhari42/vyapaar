@@ -9,6 +9,7 @@ import supabase from '@/supabase/client'
 import axios from 'axios'
 import { RealtimeContext } from '../test_components/RealtimeProvider'
 import { data, noOfTiles } from '@/constants/users'
+import communityChestCards from '@/constants/communityChest'
 
 // if(process.env.HOST == 'DEV'){
 //     console.log("DEVV")
@@ -140,24 +141,23 @@ const page = () => {
         updateState();
     },[users])
 
-    //To handle rent(property,utility and railroads) AND also Community Chest,Tax,Chance,Free Parking and Luxary Tax
-    const [rentPaymentExecuted, setRentPaymentExecuted] = useState(false);
+    //To handle rent(property,utility and railroads) AND also Community Chest,Chance,Free Parking,Tax and Luxary Tax
+    const [transanactionPaymentExecuted, setTransactionPaymentExecuted] = useState(false);
     useEffect(() => {
-        const handleRentPayment = async () => {
-            setRentPaymentExecuted((prevRentPaymentExecuted) => {
 
-                // const res = await axios.post('/api/rent',{prevRentPaymentExecuted,})
+        const handleTransactionPayment = async () => {
+            setTransactionPaymentExecuted(async (prevTransactionPaymentExecuted) => {
 
-                if (!prevRentPaymentExecuted) {
-                    const property = BoardData[users[currentUser].pos];
+                const res = await axios.post('/api/transaction',{prevTransactionPaymentExecuted,BoardData,currentUser,users})
+                const { property } = await res.data;
+                if (!prevTransactionPaymentExecuted) {
+
                     if (property.owner !== null && property.owner !== currentUser) {
                         
                         if (property.type === 'property') {
-                            const rentProvider = currentUser;
-                            const rentReceiver = property.owner;
-                            const rent = property.rent;
-                            const updatedBalanceOfProvider = users[rentProvider].balance - rent;
-                            const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+
+                            const res = await axios.post('/api/transaction/property',{currentUser, property,users})
+                            const {rent,rentProvider,rentReceiver,updatedBalanceOfProvider,updatedBalanceOfReceiver} = res.data;
 
                             setUsers((prevUsers) => ({
                                 ...prevUsers,
@@ -174,68 +174,34 @@ const page = () => {
                             console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
                             console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
                             console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+
                         } 
                         else if (property.type === 'utility') {
-                            // console.log("inside utility prop")
-                            const rentProvider = currentUser;
-                            const rentReceiver = property.owner;
-                            if (property.owner === BoardData[12].owner && property.owner === BoardData[28].owner) {
-                                const rent = dice*10
-                                const updatedBalanceOfProvider = users[rentProvider].balance - rent;
-                                const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
-                                
-                                setUsers((prevUsers) => ({
-                                    ...prevUsers,
-                                    [rentProvider]: {
-                                        ...prevUsers[rentProvider],
-                                        balance: updatedBalanceOfProvider,
-                                    },
-                                    [rentReceiver]:{
-                                        ...prevUsers[rentReceiver],
-                                        balance: updatedBalanceOfReceiver
-                                    }
-                                }));
 
-                                console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
-                                console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
-                                console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
-                                
-                            } 
-                            else if (property.owner === BoardData[12].owner || property.owner === BoardData[28].owner) {
-                                const rent = dice*4
-                                const updatedBalanceOfProvider = users[rentProvider].balance - rent;
-                                const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
-                                
-                                setUsers((prevUsers) => ({
-                                    ...prevUsers,
-                                    [rentProvider]: {
-                                        ...prevUsers[rentProvider],
-                                        balance: updatedBalanceOfProvider,
-                                    },
-                                    [rentReceiver]:{
-                                        ...prevUsers[rentReceiver],
-                                        balance: updatedBalanceOfReceiver
-                                    }
-                                }));
+                            const res = await axios.post('/api/transaction/utility',{currentUser,property,users,BoardData,dice})
+                            const {rent, rentProvider, rentReceiver, updatedBalanceOfProvider, updatedBalanceOfReceiver} = await res.data;
+                            setUsers((prevUsers) => ({
+                                ...prevUsers,
+                                [rentProvider]: {
+                                    ...prevUsers[rentProvider],
+                                    balance: updatedBalanceOfProvider,
+                                },
+                                [rentReceiver]:{
+                                    ...prevUsers[rentReceiver],
+                                    balance: updatedBalanceOfReceiver
+                                }
+                            }));
 
-                                console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
-                                console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
-                                console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
-                            }
+                            console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
+                            console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
+                            console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+
                         }
                         else if (property.type === 'railroad') {
-                            console.log("railroad logic");
                             
-                            const rentProvider = currentUser;
-                            const rentReceiver = property.owner;
-                            
-                            const propertiesArray = Object.values(BoardData);
-                            const len = propertiesArray.filter(property =>property.type === 'railroad' && property.owner == rentReceiver).length;
-
-                            const baserent = 6;
-                            const rent = baserent * len;
-                            const updatedBalanceOfProvider = users[rentProvider].balance - rent;
-                            const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+                            // console.log("railroad logic");
+                            const res = await axios.post('/api/transaction/railroad',{currentUser,property,users,BoardData});
+                            const {rent, rentReceiver, rentProvider, updatedBalanceOfProvider, updatedBalanceOfReceiver} = await res.data
 
                             setUsers((prevUsers) => ({
                                 ...prevUsers,
@@ -252,14 +218,11 @@ const page = () => {
                             console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
                             console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
                             console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+
                         }
                         else if (property.type === 'tax'){
-                            const taxPayer = currentUser;
-                            const taxPercentage = 5;
-                            const currPlayerBalance = users[currentUser].balance
-                            const taxIncurred = currPlayerBalance*taxPercentage/100
-                            const updatedBalanceAfterTax = currPlayerBalance - taxIncurred;
-                            console.log(taxIncurred)
+                            const res = await axios.post('/api/transaction/tax',{currentUser,users});
+                            const {taxPayer, taxIncurred, currPlayerBalance, updatedBalanceAfterTax} = await res.data;
 
                             setUsers((prevUsers) => ({
                                 ...prevUsers,
@@ -273,12 +236,8 @@ const page = () => {
                             console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
                         }
                         else if (property.type === 'luxuryTax'){
-                            const taxPayer = currentUser;
-                            const taxPercentage = 15;
-                            const currPlayerBalance = users[currentUser].balance
-                            const taxIncurred = currPlayerBalance*taxPercentage/100
-                            const updatedBalanceAfterTax = currPlayerBalance - taxIncurred;
-                            console.log(taxIncurred)
+                            const res = await axios.post('/api/transaction/luxurytax',{currentUser,users});
+                            const {taxPayer, taxIncurred, currPlayerBalance, updatedBalanceAfterTax} = await res.data;
 
                             setUsers((prevUsers) => ({
                                 ...prevUsers,
@@ -291,22 +250,30 @@ const page = () => {
                             console.log(`Player ${taxPayer} has to PAY TAX of ${taxIncurred}`);
                             console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
                         }
+                        else if(property.type === 'communityChest'){
+                            const randomCard = communityChestCards[Math.floor(Math.random() * communityChestCards.length)];
+                            console.log(randomCard.message);
+                            console.log("Action:", randomCard.action);
+                            if (randomCard.amount) {
+                                console.log("Amount:", randomCard.amount);
+                            }
+                        }
 
                         return true;
                     }
 
-                    return prevRentPaymentExecuted; 
+                    return prevTransactionPaymentExecuted; 
                 }
                 
-                return prevRentPaymentExecuted; 
+                return prevTransactionPaymentExecuted; 
             });
         };
 
-        handleRentPayment();
+        handleTransactionPayment();
     }, [users]);
 
     useEffect(() => {
-        setRentPaymentExecuted(false);
+        setTransactionPaymentExecuted(false);
     }, [currentUser]);    
 
     const tiles1 = tiles.slice(0,11)
@@ -376,5 +343,3 @@ const page = () => {
 
 export default page
 
-
-//To do: search check, add rent and other transaction based routes, 

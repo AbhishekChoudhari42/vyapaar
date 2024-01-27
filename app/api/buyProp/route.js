@@ -3,7 +3,7 @@ import redis_client from "@/lib/initRedis";
 export async function POST(request) {
     try {
         const { users, currentUser, BoardData } = await request.json();
-        console.log(currentUser);
+        // console.log(currentUser);
         const currPlayerPos = users[currentUser].pos;
         const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost;
         const propBought = BoardData[currPlayerPos].name;
