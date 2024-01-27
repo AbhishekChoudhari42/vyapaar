@@ -66,7 +66,7 @@ const RealtimeProvider = ({children}) => {
         .on(
             'broadcast',
             { event: 'state' },
-            (payload) => {console.log("broadcast state: ",payload.payload.message)}
+            (payload) => {payload.payload.message}
         )
         .on(
             'postgres_changes',
@@ -75,7 +75,7 @@ const RealtimeProvider = ({children}) => {
               event: '*',
               table:'game'  
             },
-            (payload) => {console.log("Updated changes: ",payload)}
+            (payload) => {payload}
         )
         
         const sub = channel.subscribe(async (status) => {

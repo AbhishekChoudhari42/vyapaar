@@ -68,39 +68,40 @@ const page = () => {
             setEndTurn(false)
         }
         else{
-            {
                 if (timeoutActive) {
-                return;
-            }
-        
-            try {
-                const res = await axios.post('/api/dice',{})
-                const { diceRoll1 } = await res.data;
-                console.log(diceRoll1)
-
-                const res1 = await axios.post('/api/playerPosition',{currentUser, users, diceRoll1});
-                const { newUsersState } =  res1.data
-
-                setUsers(newUsersState);
-                setDice(diceRoll1);
-                setDiceShow(true);
+                    return;
+                }
                 
-                //To hide the dice block
-                setTimeout(() => {
-                    setDiceShow(false);
-                    setTimeoutActive(false);
-                }, 2000);
-        
-                setTimeoutActive(true);
-                setEndTurn(true);
-                broadcastDice(diceRoll1);
-                broadcastState(newUsersState);
 
-            } catch (error) {
-                console.error('Error fetching dice roll:', error);
-                setTimeoutActive(false);
-                setEndTurn(true);
-            }}
+                try {
+
+                    const res = await axios.post('/api/dice',{})
+                    const { diceRoll1 } = await res.data;
+                    // console.log(diceRoll1)
+    
+                    const res1 = await axios.post('/api/playerPosition',{currentUser, users, diceRoll1});
+                    const { newUsersState } =  res1.data
+    
+                    setUsers(newUsersState);
+                    setDice(diceRoll1);
+                    setDiceShow(true);
+                    
+                    //To hide the dice block
+                    setTimeout(() => {
+                        setDiceShow(false);
+                        setTimeoutActive(false);
+                    }, 500);
+            
+                    setTimeoutActive(true);
+                    setEndTurn(true);
+                    broadcastDice(diceRoll1);
+                    broadcastState(newUsersState);
+
+                } catch (error) {
+                    console.error('Error fetching dice roll:', error);
+                    setTimeoutActive(false);
+                    setEndTurn(true);
+                }
         };
     }
 
@@ -111,7 +112,7 @@ const page = () => {
 
         const res = await axios.post('/api/buyProp',{users, currentUser, BoardData})
         const {currPlayerPos,currentUser:updatedCurrentUser,currPlayerBalance,propBought } = await res.data;
-
+        // console.log("Updated curr user", updatedCurrentUser)
         setBoardData((prevBoardData)=>({
             ...prevBoardData, [currPlayerPos]:{
                 ...prevBoardData[currPlayerPos],
@@ -138,6 +139,175 @@ const page = () => {
         }
         updateState();
     },[users])
+
+    //To handle rent(property,utility and railroads) AND also Community Chest,Tax,Chance,Free Parking and Luxary Tax
+    const [rentPaymentExecuted, setRentPaymentExecuted] = useState(false);
+    useEffect(() => {
+        const handleRentPayment = async () => {
+            setRentPaymentExecuted((prevRentPaymentExecuted) => {
+
+                // const res = await axios.post('/api/rent',{prevRentPaymentExecuted,})
+
+                if (!prevRentPaymentExecuted) {
+                    const property = BoardData[users[currentUser].pos];
+                    if (property.owner !== null && property.owner !== currentUser) {
+                        
+                        if (property.type === 'property') {
+                            const rentProvider = currentUser;
+                            const rentReceiver = property.owner;
+                            const rent = property.rent;
+                            const updatedBalanceOfProvider = users[rentProvider].balance - rent;
+                            const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+
+                            setUsers((prevUsers) => ({
+                                ...prevUsers,
+                                [rentProvider]: {
+                                    ...prevUsers[rentProvider],
+                                    balance: updatedBalanceOfProvider,
+                                },
+                                [rentReceiver]:{
+                                    ...prevUsers[rentReceiver],
+                                    balance: updatedBalanceOfReceiver
+                                }
+                            }));
+
+                            console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
+                            console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
+                            console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+                        } 
+                        else if (property.type === 'utility') {
+                            // console.log("inside utility prop")
+                            const rentProvider = currentUser;
+                            const rentReceiver = property.owner;
+                            if (property.owner === BoardData[12].owner && property.owner === BoardData[28].owner) {
+                                const rent = dice*10
+                                const updatedBalanceOfProvider = users[rentProvider].balance - rent;
+                                const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+                                
+                                setUsers((prevUsers) => ({
+                                    ...prevUsers,
+                                    [rentProvider]: {
+                                        ...prevUsers[rentProvider],
+                                        balance: updatedBalanceOfProvider,
+                                    },
+                                    [rentReceiver]:{
+                                        ...prevUsers[rentReceiver],
+                                        balance: updatedBalanceOfReceiver
+                                    }
+                                }));
+
+                                console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
+                                console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
+                                console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+                                
+                            } 
+                            else if (property.owner === BoardData[12].owner || property.owner === BoardData[28].owner) {
+                                const rent = dice*4
+                                const updatedBalanceOfProvider = users[rentProvider].balance - rent;
+                                const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+                                
+                                setUsers((prevUsers) => ({
+                                    ...prevUsers,
+                                    [rentProvider]: {
+                                        ...prevUsers[rentProvider],
+                                        balance: updatedBalanceOfProvider,
+                                    },
+                                    [rentReceiver]:{
+                                        ...prevUsers[rentReceiver],
+                                        balance: updatedBalanceOfReceiver
+                                    }
+                                }));
+
+                                console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
+                                console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
+                                console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+                            }
+                        }
+                        else if (property.type === 'railroad') {
+                            console.log("railroad logic");
+                            
+                            const rentProvider = currentUser;
+                            const rentReceiver = property.owner;
+                            
+                            const propertiesArray = Object.values(BoardData);
+                            const len = propertiesArray.filter(property =>property.type === 'railroad' && property.owner == rentReceiver).length;
+
+                            const baserent = 6;
+                            const rent = baserent * len;
+                            const updatedBalanceOfProvider = users[rentProvider].balance - rent;
+                            const updatedBalanceOfReceiver = users[rentReceiver].balance + rent;
+
+                            setUsers((prevUsers) => ({
+                                ...prevUsers,
+                                [rentProvider]: {
+                                    ...prevUsers[rentProvider],
+                                    balance: updatedBalanceOfProvider,
+                                },
+                                [rentReceiver]:{
+                                    ...prevUsers[rentReceiver],
+                                    balance: updatedBalanceOfReceiver
+                                }
+                            }));
+
+                            console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
+                            console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
+                            console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
+                        }
+                        else if (property.type === 'tax'){
+                            const taxPayer = currentUser;
+                            const taxPercentage = 5;
+                            const currPlayerBalance = users[currentUser].balance
+                            const taxIncurred = currPlayerBalance*taxPercentage/100
+                            const updatedBalanceAfterTax = currPlayerBalance - taxIncurred;
+                            console.log(taxIncurred)
+
+                            setUsers((prevUsers) => ({
+                                ...prevUsers,
+                                [taxPayer]: {
+                                    ...prevUsers[taxPayer],
+                                    balance: updatedBalanceAfterTax,
+                                }
+                            }));
+
+                            console.log(`Player ${taxPayer} has to PAY TAX of ${taxIncurred}`);
+                            console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
+                        }
+                        else if (property.type === 'luxuryTax'){
+                            const taxPayer = currentUser;
+                            const taxPercentage = 15;
+                            const currPlayerBalance = users[currentUser].balance
+                            const taxIncurred = currPlayerBalance*taxPercentage/100
+                            const updatedBalanceAfterTax = currPlayerBalance - taxIncurred;
+                            console.log(taxIncurred)
+
+                            setUsers((prevUsers) => ({
+                                ...prevUsers,
+                                [taxPayer]: {
+                                    ...prevUsers[taxPayer],
+                                    balance: updatedBalanceAfterTax,
+                                }
+                            }));
+
+                            console.log(`Player ${taxPayer} has to PAY TAX of ${taxIncurred}`);
+                            console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
+                        }
+
+                        return true;
+                    }
+
+                    return prevRentPaymentExecuted; 
+                }
+                
+                return prevRentPaymentExecuted; 
+            });
+        };
+
+        handleRentPayment();
+    }, [users]);
+
+    useEffect(() => {
+        setRentPaymentExecuted(false);
+    }, [currentUser]);    
 
     const tiles1 = tiles.slice(0,11)
     const tiles2 = tiles.slice(11,20)
@@ -205,3 +375,6 @@ const page = () => {
 }
 
 export default page
+
+
+//To do: search check, add rent and other transaction based routes, 

@@ -3,7 +3,7 @@ const tableData = [
     { type: 'property', id: 1, name: 'Mediterranean Avenue', cost: 60, rent: 2, owner: null, buyable: true },
     { type: 'communityChest', id: 2, name: 'Community Chest', buyable: false },
     { type: 'property', id: 3, name: 'Baltic Avenue', cost: 60, rent: 4, owner: null, buyable: true },
-    { type: 'tax', id: 4, name: 'Income Tax', amount: 200, buyable: false },
+    { type: 'tax', id: 4, name: 'Income Tax', buyable: false },
     { type: 'railroad', id: 5, name: 'Reading Railroad', cost: 200, owner: null, buyable: true },
     { type: 'property', id: 6, name: 'Oriental Avenue', cost: 100, rent: 6, owner: null, buyable: true },
     { type: 'chance', id: 7, name: 'Chance', buyable: false },
@@ -40,5 +40,5 @@ const tableData = [
     { type: 'luxuryTax', id: 38, name: 'Luxury Tax', buyable: false },
     { type: 'property', id: 39, name: 'Boardwalk', cost: 400, rent: 50, owner: null, buyable: true }
   ];
-  
+
 export default tableData;
