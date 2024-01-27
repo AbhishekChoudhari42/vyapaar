@@ -7,7 +7,7 @@ import tableData from './tableData'
 import LeaderBoard from './leaderboard'
 import supabase from '@/supabase/client'
 import axios from 'axios'
-import { RealtimeContext } from '../test_components/RealtimeProvider'
+import { RealtimeContext } from '../../../components/test_components/RealtimeProvider'
 import { data, noOfTiles } from '@/constants/users'
 import communityChestCards from '@/constants/communityChest'
 

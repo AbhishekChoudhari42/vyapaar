@@ -1,15 +1,9 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
-import supabase from '@/supabase/client'
-import { v4 as uuid } from 'uuid'
-import useStore from '@/store/store'
-import { useRouter } from 'next/navigation'
-// components
-import Gameboard from '../test_components/Gameboard'
-import Chat from '../test_components/Chat'
-import Leaderboard from '../test_components/Leaderboard'
-import Properties from '../test_components/Properties'
-const Page = () => {
+import Gameboard from '@/components/test_components/Gameboard'
+import Chat from '@/components/test_components/Chat'
+import Leaderboard from '@/components/test_components/Leaderboard'
+import Properties from '@/components/test_components/Properties'
+const page = () => {
 
     return (
         <div className='w-screen h-screen flex'>
@@ -22,5 +16,4 @@ const Page = () => {
         </div>
     )
 }
-
-export default Page
+export default page

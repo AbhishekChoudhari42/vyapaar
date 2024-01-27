@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react'
 import useStore from '@/store/store'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
+import { toast } from 'react-toastify';
+
 const page = () => {
 
     const {gameroom, setGameroom , user,setUser} = useStore()
@@ -29,8 +31,15 @@ const page = () => {
     
     const createRoom = async (e,roomId,user) =>{
         e.preventDefault();
-        let res = await axios.post('/room/create',{roomId,user})
-        console.log(res)
+        try{
+            let res = await axios.post('/api/room/create',{roomId,user})
+            // toast("joined room"+roomId)
+            router.push('/game');
+
+        }catch(error){
+            console.log(error)
+        }
+
     }
 
     return (

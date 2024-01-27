@@ -14,15 +14,9 @@ const page = () => {
   const noOfTiles = 40
   const [tiles,setTiles] = useState(new Array(noOfTiles).fill(0))
 
-
-
-
   useEffect(()=>{
-    console.log('re i gb')
-    console.log("rerender",users);
-    setTiles(new Array(noOfTiles).fill(0))
-  },[users])
-
+    
+  },[])
 
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
@@ -31,7 +25,9 @@ const page = () => {
 
   return (
     <div className='w-[550px] h-[550px] flex flex-col'>
+      
       {JSON.stringify(users)}
+
       <div className='w-full flex justify-between'>
         { users &&
           tiles1.map((el, index) => {
@@ -67,7 +63,6 @@ const page = () => {
           })
         }
       </div>
-    
     </div>
   )
 }

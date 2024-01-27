@@ -13,24 +13,20 @@ const page = () => {
   const { gameroom , setUser , users, setUsers} = useStore()
   
   useEffect(()=>{
-    
     if(localStorage.getItem('user')){
       setUser(localStorage.getItem('user'))
-    }
-
-    if(!gameroom || !localStorage.getItem('roomId')){
-      router.push('/room',{shallow:true})
     }
   },[])
 
   useEffect(()=>{
-    // const roomId = ''
     const getInitialState = async () => {
-      // const res = await axios.get(`/room/getRoom/${roomId}`) 
-      if(res?.data?.length > 0){
-        console.log(JSON.parse(res.data[0].state))
-        return JSON.parse(res.data[0].state)
-      }
+      const res = await axios.get(`/api/room/fetch/${'aaa_room1'}`)
+      console.log(res) 
+      if(res?.data){
+        return res.data.data
+      }else{
+        return {}
+      }   
     }
     setUsers(getInitialState())
   },[])
