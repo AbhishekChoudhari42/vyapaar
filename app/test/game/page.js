@@ -1,10 +1,4 @@
 "use client"
-import React, { useEffect, useRef, useState } from 'react'
-import supabase from '@/supabase/client'
-import { v4 as uuid } from 'uuid'
-import useStore from '@/store/store'
-import { useRouter } from 'next/navigation'
-// components
 import Gameboard from '../test_components/Gameboard'
 import Chat from '../test_components/Chat'
 import Leaderboard from '../test_components/Leaderboard'
@@ -22,5 +16,4 @@ const Page = () => {
         </div>
     )
 }
-
 export default Page
