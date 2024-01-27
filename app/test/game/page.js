@@ -1,8 +1,8 @@
 "use client"
-import Gameboard from '../test_components/Gameboard'
-import Chat from '../test_components/Chat'
-import Leaderboard from '../test_components/Leaderboard'
-import Properties from '../test_components/Properties'
+import Gameboard from '@/components/test_components/Gameboard'
+import Chat from '@/components/test_components/Chat'
+import Leaderboard from '@/components/test_components/Leaderboard'
+import Properties from '@/components/test_components/Properties'
 const Page = () => {
 
     return (

@@ -1,5 +1,5 @@
 import './test.css'
-import RealtimeProvider from './test_components/RealtimeProvider'
+import RealtimeProvider from '../../components/test_components/RealtimeProvider'
 
 export default function RootLayout({ children }) {
 
