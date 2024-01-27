@@ -50,7 +50,6 @@ const page = () => {
             event: 'dice',
             payload: { message: dice },
         })
-
     }
 
     const broadcastState = async (state) =>{
@@ -60,7 +59,6 @@ const page = () => {
             event: 'state',
             payload: { message: state },
         })
-
     }
     
     const rollDice = async () => {
@@ -72,7 +70,6 @@ const page = () => {
                 if (timeoutActive) {
                     return;
                 }
-                
 
                 try {
 
@@ -148,7 +145,9 @@ const page = () => {
         const handleTransactionPayment = async () => {
             setTransactionPaymentExecuted(async (prevTransactionPaymentExecuted) => {
 
-                const res = await axios.post('/api/transaction',{prevTransactionPaymentExecuted,BoardData,currentUser,users})
+                const res = await axios.post('/api/transaction',{prevTransactionPaymentExecuted,BoardData,currentUser,users,dice})
+
+                // const res1 = await axios.post('/api/transaction/rent',{prevTransactionPaymentExecuted})
                 const { property } = await res.data;
                 if (!prevTransactionPaymentExecuted) {
 
@@ -251,20 +250,21 @@ const page = () => {
                             console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
                         }
                         else if(property.type === 'communityChest'){
-                            const randomCard = communityChestCards[Math.floor(Math.random() * communityChestCards.length)];
-                            console.log(randomCard.message);
-                            console.log("Action:", randomCard.action);
-                            if (randomCard.amount) {
-                                console.log("Amount:", randomCard.amount);
-                            }
+                            console.log("Community chest logic")
+                            // const randomCard = communityChestCards[Math.floor(Math.random() * communityChestCards.length)];
+                            // console.log(randomCard.message);
+                            // console.log("Action:", randomCard.action);
+                            // if (randomCard.amount) {
+                            //     console.log("Amount:", randomCard.amount);
+                            // }
                         }
-
+                        else if(property.type === 'chance'){
+                            console.log("Chance logic")
+                        }
                         return true;
                     }
-
                     return prevTransactionPaymentExecuted; 
                 }
-                
                 return prevTransactionPaymentExecuted; 
             });
         };

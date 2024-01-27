@@ -8,12 +8,14 @@ export async function POST(request) {
         const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost;
         const propBought = BoardData[currPlayerPos].name;
         const existingProp = users[currentUser].properties
-        const updatedJSON = {
+        const updatedJSON = JSON.stringify({
             "balance": currPlayerBalance,
             "pos": currPlayerPos,
             "properties": [...existingProp, propBought]
-        }
-        const update = redis_client.json.set('game', "$."+currentUser, updatedJSON);
+        })
+
+
+        await redis_client.call("JSON.SET", "game",  "$."+currentUser, updatedJSON);
 
         const response = {
             users,
