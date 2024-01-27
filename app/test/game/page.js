@@ -3,7 +3,7 @@ import Gameboard from '@/components/test_components/Gameboard'
 import Chat from '@/components/test_components/Chat'
 import Leaderboard from '@/components/test_components/Leaderboard'
 import Properties from '@/components/test_components/Properties'
-const Page = () => {
+const page = () => {
 
     return (
         <div className='w-screen h-screen flex'>
@@ -16,4 +16,4 @@ const Page = () => {
         </div>
     )
 }
-export default Page
+export default page
