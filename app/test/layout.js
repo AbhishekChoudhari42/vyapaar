@@ -1,4 +1,3 @@
-import './test.css'
 import RealtimeProvider from '../../components/test_components/RealtimeProvider'
 
 export default function RootLayout({ children }) {
