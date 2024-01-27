@@ -7,11 +7,12 @@ const page = () => {
 
     const { setUser , user} = useStore()
     const [userValue, setUserValue] = useState('')
+
     const router = useRouter();
 
     const login = (e) => {
       e.preventDefault()
-      console.log(userValue)
+
       localStorage.setItem('user',userValue)
       setUser(userValue)
       router.push('/room',{shallow:true})
@@ -19,7 +20,7 @@ const page = () => {
 
     useEffect(() => {
         if(user){
-            router.push('/room',{shallow:true})
+            router.push('/room')
         }
     }, [])
 
