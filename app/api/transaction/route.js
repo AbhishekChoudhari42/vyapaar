@@ -8,7 +8,7 @@ export async function POST(request){
         return new Response(JSON.stringify(response))
     }
     catch (error) {
-        console.error('Error processing buyProp request:', error);
+        console.error('Error processing transaction request:', error);
         return new Response('Internal Server Error', { status: 500 });
     }
 }

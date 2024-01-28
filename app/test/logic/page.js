@@ -9,7 +9,10 @@ import supabase from '@/supabase/client'
 import axios from 'axios'
 import { RealtimeContext } from '../../../components/test_components/RealtimeProvider'
 import { data, noOfTiles } from '@/constants/users'
-import communityChestCards from '@/constants/communityChest'
+import { Averia_Gruesa_Libre } from 'next/font/google'
+import properties from '@/components/properties'
+import checkBuyable from '@/utils/unbuyable'
+
 
 // if(process.env.HOST == 'DEV'){
 //     console.log("DEVV")
@@ -72,10 +75,9 @@ const page = () => {
                 }
 
                 try {
-
+                    console.log(checkBuyable(users[currentUser].pos))
                     const res = await axios.post('/api/dice',{})
                     const { diceRoll1 } = await res.data;
-                    // console.log(diceRoll1)
     
                     const res1 = await axios.post('/api/playerPosition',{currentUser, users, diceRoll1});
                     const { newUsersState } =  res1.data
@@ -108,9 +110,9 @@ const page = () => {
     //Handles the buying of properties
     const handleTransaction = async () =>{
 
-        const res = await axios.post('/api/buyProp',{users, currentUser, BoardData})
+        const res = await axios.post('/api/transaction/buyprop',{users, currentUser, BoardData})
         const {currPlayerPos,currentUser:updatedCurrentUser,currPlayerBalance,propBought } = await res.data;
-        // console.log("Updated curr user", updatedCurrentUser)
+
         setBoardData((prevBoardData)=>({
             ...prevBoardData, [currPlayerPos]:{
                 ...prevBoardData[currPlayerPos],
@@ -147,59 +149,14 @@ const page = () => {
 
                 const res = await axios.post('/api/transaction',{prevTransactionPaymentExecuted,BoardData,currentUser,users,dice})
 
-                // const res1 = await axios.post('/api/transaction/rent',{prevTransactionPaymentExecuted})
                 const { property } = await res.data;
                 if (!prevTransactionPaymentExecuted) {
 
                     if (property.owner !== null && property.owner !== currentUser) {
-                        
-                        if (property.type === 'property') {
 
-                            const res = await axios.post('/api/transaction/property',{currentUser, property,users})
-                            const {rent,rentProvider,rentReceiver,updatedBalanceOfProvider,updatedBalanceOfReceiver} = res.data;
+                        if(property.type === 'property' || property.type === 'utility' || property.type === 'railroad'){
+                            const res = await axios.post('http://localhost:3000/api/transaction/rent',{currentUser, property,users,BoardData,dice})
 
-                            setUsers((prevUsers) => ({
-                                ...prevUsers,
-                                [rentProvider]: {
-                                    ...prevUsers[rentProvider],
-                                    balance: updatedBalanceOfProvider,
-                                },
-                                [rentReceiver]:{
-                                    ...prevUsers[rentReceiver],
-                                    balance: updatedBalanceOfReceiver
-                                }
-                            }));
-
-                            console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
-                            console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
-                            console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
-
-                        } 
-                        else if (property.type === 'utility') {
-
-                            const res = await axios.post('/api/transaction/utility',{currentUser,property,users,BoardData,dice})
-                            const {rent, rentProvider, rentReceiver, updatedBalanceOfProvider, updatedBalanceOfReceiver} = await res.data;
-                            setUsers((prevUsers) => ({
-                                ...prevUsers,
-                                [rentProvider]: {
-                                    ...prevUsers[rentProvider],
-                                    balance: updatedBalanceOfProvider,
-                                },
-                                [rentReceiver]:{
-                                    ...prevUsers[rentReceiver],
-                                    balance: updatedBalanceOfReceiver
-                                }
-                            }));
-
-                            console.log(`Player ${rentProvider} has to PAY RENT of ${rent} to Player ${rentReceiver}`);
-                            console.log("Of provider: ",users[rentProvider].balance," to ", updatedBalanceOfProvider)
-                            console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
-
-                        }
-                        else if (property.type === 'railroad') {
-                            
-                            // console.log("railroad logic");
-                            const res = await axios.post('/api/transaction/railroad',{currentUser,property,users,BoardData});
                             const {rent, rentReceiver, rentProvider, updatedBalanceOfProvider, updatedBalanceOfReceiver} = await res.data
 
                             setUsers((prevUsers) => ({
@@ -219,8 +176,8 @@ const page = () => {
                             console.log("Of receiver: ",users[rentReceiver].balance," to ", updatedBalanceOfReceiver)
 
                         }
-                        else if (property.type === 'tax'){
-                            const res = await axios.post('/api/transaction/tax',{currentUser,users});
+                        else if(property.type === 'tax' || property.type === 'luxuryTax'){
+                            const res = await axios.post('/api/transaction/tax',{currentUser,users,property});
                             const {taxPayer, taxIncurred, currPlayerBalance, updatedBalanceAfterTax} = await res.data;
 
                             setUsers((prevUsers) => ({
@@ -234,32 +191,10 @@ const page = () => {
                             console.log(`Player ${taxPayer} has to PAY TAX of ${taxIncurred}`);
                             console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
                         }
-                        else if (property.type === 'luxuryTax'){
-                            const res = await axios.post('/api/transaction/luxurytax',{currentUser,users});
-                            const {taxPayer, taxIncurred, currPlayerBalance, updatedBalanceAfterTax} = await res.data;
-
-                            setUsers((prevUsers) => ({
-                                ...prevUsers,
-                                [taxPayer]: {
-                                    ...prevUsers[taxPayer],
-                                    balance: updatedBalanceAfterTax,
-                                }
-                            }));
-
-                            console.log(`Player ${taxPayer} has to PAY TAX of ${taxIncurred}`);
-                            console.log("Before tax: ",currPlayerBalance," and After tax ", updatedBalanceAfterTax)
-                        }
-                        else if(property.type === 'communityChest'){
-                            console.log("Community chest logic")
-                            // const randomCard = communityChestCards[Math.floor(Math.random() * communityChestCards.length)];
-                            // console.log(randomCard.message);
-                            // console.log("Action:", randomCard.action);
-                            // if (randomCard.amount) {
-                            //     console.log("Amount:", randomCard.amount);
-                            // }
-                        }
-                        else if(property.type === 'chance'){
-                            console.log("Chance logic")
+                        else if(property.type === 'communityChest' || property.type === 'chance'){
+                            console.log("Community chest or chance logic")
+                            const res = await axios.post('/api/specialcards')
+                            //Will impliment later
                         }
                         return true;
                     }
@@ -343,3 +278,4 @@ const page = () => {
 
 export default page
 
+//todo: add redis set in api routes, community chest and chance routes, house logic and api
