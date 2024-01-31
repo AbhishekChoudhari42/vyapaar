@@ -2,7 +2,7 @@ export async function POST(request){
     try{
 
         const {currentUser, property,users} = await request.json()
-
+        
         const rentProvider = currentUser;
         const rentReceiver = property.owner;
         const rent = property.rent;

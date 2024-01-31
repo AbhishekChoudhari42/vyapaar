@@ -7,6 +7,7 @@ export async function POST(request) {
         const currPlayerPos = users[currentUser].pos;
         const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost;
         const propBought = BoardData[currPlayerPos].name;
+        const propBoughtId = BoardData[currPlayerPos].id;
         const existingProp = users[currentUser].properties
         const updatedJSON = JSON.stringify({
             "balance": currPlayerBalance,
@@ -23,6 +24,7 @@ export async function POST(request) {
             BoardData,
             currPlayerBalance,
             propBought,
+            propBoughtId,
             currPlayerPos
         };
 
