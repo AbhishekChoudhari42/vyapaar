@@ -3,17 +3,20 @@ import redis_client from "@/lib/initRedis";
 export async function POST(request) {
     try {
         const { users, currentUser, BoardData } = await request.json();
-        console.log(currentUser);
+        // console.log(currentUser);
         const currPlayerPos = users[currentUser].pos;
         const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost;
         const propBought = BoardData[currPlayerPos].name;
+        const propBoughtId = BoardData[currPlayerPos].id;
         const existingProp = users[currentUser].properties
-        const updatedJSON = {
+        const updatedJSON = JSON.stringify({
             "balance": currPlayerBalance,
             "pos": currPlayerPos,
             "properties": [...existingProp, propBought]
-        }
-        const update = redis_client.json.set('game', "$."+currentUser, updatedJSON);
+        })
+
+
+        await redis_client.call("JSON.SET", "game",  "$."+currentUser, updatedJSON);
 
         const response = {
             users,
@@ -21,6 +24,7 @@ export async function POST(request) {
             BoardData,
             currPlayerBalance,
             propBought,
+            propBoughtId,
             currPlayerPos
         };
 

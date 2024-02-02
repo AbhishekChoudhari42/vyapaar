@@ -24,9 +24,13 @@ export async function POST(request){
             properties:[] 
         },
     }
-    // const res = await redis_client.json.get('game', "$."+1);
-    const res = redis_client.json.set('game', "$", value);
-    // const {key,value} = await request.json();
-    // const res = await redis_client.json.set(key,value)
-    return new Response(JSON.stringify(res));
+    const jsonString = JSON.stringify(value);
+
+    try {
+        const res = await redis_client.call("JSON.SET", "game", "$", jsonString);
+        return new Response(JSON.stringify(res));
+    } catch (error) {
+        console.error('Error setting JSON in Redis:', error);
+        return new Response('Internal Server Error', { status: 500 });
+    }
 }
