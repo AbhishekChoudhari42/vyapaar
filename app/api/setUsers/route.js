@@ -1,4 +1,4 @@
-import supabase from "@/supabase/client";
+import supabase from "@/supabase/browserClient";
 
 export async function POST(request){
     const {admin,users} = await request.json();

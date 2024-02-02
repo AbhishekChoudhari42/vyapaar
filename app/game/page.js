@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import useStore from '@/store/store'
 import Chat from '@/components/chat'
-import supabase from '@/supabase/client'
+import supabase from '@/supabase/browserClient'
 import axios from 'axios'
 
 const page = () => {

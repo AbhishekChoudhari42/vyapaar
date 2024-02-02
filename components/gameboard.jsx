@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import Tile from './tile'
 import { v4 as uuid } from 'uuid'
 import LeaderBoard from './leaderboard'
-import supabase from '@/supabase/client'
+import supabase from '@/supabase/browserClient'
 import { getPlayersArrayAtPosition } from '@/utils/game_lib'
 import Controls from './controls'
 import useStore from '@/store/store'
@@ -15,7 +15,7 @@ const page = () => {
   const [tiles,setTiles] = useState(new Array(noOfTiles).fill(0))
 
   useEffect(()=>{
-    
+
   },[])
 
   const tiles1 = tiles.slice(0, 11)

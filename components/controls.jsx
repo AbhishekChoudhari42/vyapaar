@@ -1,6 +1,6 @@
 "use client"
 import React, { useState } from 'react'
-import supabase from '../supabase/client'
+import supabase from '../supabase/browserClient'
 import useStore from '@/store/store'
 
 const Controls = () => {

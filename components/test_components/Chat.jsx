@@ -1,6 +1,6 @@
 "use client"
 import React, { useContext, useEffect, useRef, useState } from 'react'
-import supabase from '@/supabase/client'
+import supabase from '@/supabase/browserClient'
 import { v4 as uuid } from 'uuid'
 import useStore from '@/store/store'
 import { RealtimeContext } from './RealtimeProvider'

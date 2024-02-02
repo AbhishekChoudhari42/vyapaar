@@ -1,6 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
-import supabase from '@/supabase/client';
+import supabase from '@/supabase/browserClient';
 
 const page = () => {
   // console.log(supabase)

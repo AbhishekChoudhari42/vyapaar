@@ -5,7 +5,7 @@ import { v4 as uuid } from 'uuid'
 import Dice from './dice'
 import tableData from './tableData'
 import LeaderBoard from './leaderboard'
-import supabase from '@/supabase/client'
+import supabase from '@/supabase/browserClient'
 import axios from 'axios'
 import { RealtimeContext } from '../../../components/test_components/RealtimeProvider'
 import { data, noOfTiles } from '@/constants/users'
@@ -301,8 +301,9 @@ const page = () => {
                 return prevRentPaymentExecuted; 
             });
         };
-
+        
         handleRentPayment();
+
     }, [users]);
 
     useEffect(() => {

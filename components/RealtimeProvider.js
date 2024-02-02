@@ -1,7 +1,7 @@
 "use client"
 
 import useStore from '@/store/store'
-import supabase from '@/supabase/client'
+import supabase from '@/supabase/browserClient'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, createContext } from 'react'
 export const RealtimeContext = createContext({ users: {}, error: false })

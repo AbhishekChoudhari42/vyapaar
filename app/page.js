@@ -1,15 +1,9 @@
-"use client"
-import Image from 'next/image'
-import axios from 'axios'
+import React from 'react'
 
-export default function Home() {
-  const setFoo = async () => {
-    console.log(res)
-  }
-
+const page = () => {
   return (
-    <main className="min-h-screen">
-        <button onClick={setFoo}>setfoo</button>
-    </main>
+    <div>home</div>
   )
 }
+
+export default page
