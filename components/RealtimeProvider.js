@@ -1,13 +1,15 @@
 "use client"
 import useStore from '@/store/store'
-import supabase from '@/supabase/browserClient'
+import {supabaseBrowser} from '../lib/supabase/browser'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, createContext } from 'react'
 export const RealtimeContext = createContext({ users: {}, error: false })
 
 const RealtimeProvider = ({ children }) => {
-
+    
     const { user, gameroom, setGameroom, addMessage } = useStore()
+    const supabase = supabaseBrowser()
+
     const router = useRouter()
 
     const channel = supabase.channel(gameroom)

@@ -4,14 +4,14 @@ import { useRouter } from 'next/navigation'
 import React, { useEffect } from 'react'
 import useStore from '@/store/store'
 import Chat from '@/components/chat'
-import supabase from '@/supabase/browserClient'
+import {supabaseBrowser} from '@/lib/supabase/browser'
 import axios from 'axios'
 
 const page = () => {
 
   const router = useRouter();
   const { gameroom , setUser , users, setUsers} = useStore()
-  
+  const supabase = supabaseBrowser()
   useEffect(()=>{
     if(localStorage.getItem('user')){
       setUser(localStorage.getItem('user'))

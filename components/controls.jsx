@@ -1,12 +1,14 @@
 "use client"
 import React, { useState } from 'react'
-import supabase from '../supabase/browserClient'
+import {supabaseBrowser} from '@/lib/supabase/browser'
+
 import useStore from '@/store/store'
 
 const Controls = () => {
 
     const [ gamecontrol, setGameControl ] = useState({ currentTurn: true , diceRolling:false })
-
+    const supabase = supabaseBrowser()
+    
     const rollDice = async (setGamecontrol) => {
         // API call with username details
         // returns random number 

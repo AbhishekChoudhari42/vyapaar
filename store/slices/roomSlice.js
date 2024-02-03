@@ -1,4 +1,4 @@
-import { data } from "@/constants/users"
+import { data } from "../../lib/constant/users"
 
 const roomSlice = (set) =>({
     gameroom: null,
