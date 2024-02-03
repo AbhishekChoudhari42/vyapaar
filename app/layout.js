@@ -1,7 +1,7 @@
 import { Inter } from 'next/font/google'
 import './globals.css'
 import RealtimeProvider from '@/components/RealtimeProvider'
-
+import QueryProvider from '@/components/query-provider'
 const inter = Inter({ subsets: ['latin'] })
 import { ToastContainer } from 'react-toastify';
 export const metadata = {
@@ -13,10 +13,12 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        <RealtimeProvider>
-          {children}
-        </RealtimeProvider>
-        <ToastContainer/>
+        <QueryProvider>
+          <RealtimeProvider>
+            {children}
+          </RealtimeProvider>
+        </QueryProvider>
+        <ToastContainer />
       </body>
     </html>
   )

@@ -14,14 +14,6 @@ const page = () => {
 
     useEffect(() => {
 
-        if(!user){
-            router.push('/homepage',{shallow:true})
-        }
-        if (localStorage.getItem('roomId')) {
-            setGameroom(localStorage.getItem('roomId'))
-            router.push('/game',{shallow:true})
-        }
-
     },[])
 
     const joinroom = async (e) => {
