@@ -1,5 +1,4 @@
 "use client"
-
 import useStore from '@/store/store'
 import supabase from '@/supabase/browserClient'
 import { useRouter } from 'next/navigation'
@@ -42,43 +41,9 @@ const RealtimeProvider = ({ children }) => {
                         let newState = payload?.new?.state;
                         console.log(newState)
                         console.log(users)
-                        setUsers({})
-
-                        console.log("rtime pg")
-                        // console.log(payload,'pload')
+                        setUsers((users)=>{{}})
                     }
                 }).subscribe()
-
-            // channel.on('presence', { event: 'sync' }, () => {
-            //     const newState = channel.presenceState()
-            //     let usersObject = {}
-            //     Object.keys(newState).forEach(id => {
-            //         usersObject = { ...usersObject, [id]: { ...newState[id][0] } }
-            //     })
-            //     setUsers(usersObject)
-            // })
-            // .on('presence', { event: 'join' },
-
-            //         ({ key, newPresences }) =>
-            //         {
-            //             // console.log('join', key, newPresences)
-            //         }
-            //     )
-            // .on('presence', { event: 'leave' },
-
-            //         ({ key, leftPresences }) => {
-            //             // console.log('leave', key, leftPresences)
-            //         }
-            // )
-            // .on('broadcast',
-            //     { event: 'message' },
-            //     (data) => messageReceived(data)
-            // )
-
-            // const sub = channel.subscribe(async (status) => {
-            //     if (status != 'SUBSCRIBED') { return }
-            //     const presenceTrackStatus = await channel.track(userStatus)
-            // })
 
 
             const untrack = async () => {
@@ -86,6 +51,7 @@ const RealtimeProvider = ({ children }) => {
 
             }
             return () => { sub.unsubscribe() }
+
         } else {
             setError(true)
         }
