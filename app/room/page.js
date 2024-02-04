@@ -5,48 +5,49 @@ import { useRouter } from 'next/navigation'
 import axios from 'axios'
 import { toast } from 'react-toastify';
 
+import { createRoom } from '@/lib/api_calls/room'
+import useUser from '@/hooks/useUser'
+
 const page = () => {
 
-    const {gameroom, setGameroom , user,setUser} = useStore()
+    const {setRoomID} = useStore()
 
-    const [room, setRoom] = useState('')
+    const [createRoomVal, setCreateRoomVal] = useState('')
+    const [joinRoomVal, setJoinRoomVal] = useState('')
+    const user = useUser()
+
     const router = useRouter();
 
     useEffect(() => {
-
+        if(!user){
+            router.push('/')
+        }    
     },[])
 
     const joinroom = async (e) => {
         e.preventDefault();
-    
     }
-    
-    const createRoom = async (e,roomId,user) =>{
+    const roomCreation = async (e) => {
         e.preventDefault();
-        try{
-            let res = await axios.post('/api/room/create',{roomId,user})
-            // toast("joined room"+roomId)
-            router.push('/game');
-
-        }catch(error){
-            console.log(error)
+        const data = await createRoom(createRoomVal,user?.data?.display_name)
+        if(data.success){
+            router.push(`/game/${createRoomVal}`)
         }
-
     }
-
+    
     return (
         <div className='w-screen h-screen flex justify-center items-center flex-col'>            
-            <form className='flex flex-col gap-2 w-[350px] mb-8'>
+            <div className='flex flex-col gap-2 w-[350px] mb-8'>
                 <h2 className='text-lg font-semibold'>Create room</h2>
-                <input className = "input-style" type='text'  value={room} onChange={(e) => setRoom(e.target.value)} />
-                <button className = 'white-button' onClick={(e) => { createRoom(e,room,user) }}>Create Room</button>
-            </form>
+                <input className = "input-style" type='text'  value={createRoomVal} onChange={(e) => setCreateRoomVal(e.target.value)} />
+                <button className = 'white-button' onClick={roomCreation}>Create Room</button>
+            </div>
 
-            <form className='flex flex-col gap-2 w-[350px]'>
+            <div className='flex flex-col gap-2 w-[350px]'>
                 <h2 className='text-lg font-semibold'>Join room</h2>
-                <input className = "input-style" type='text'  value={room} onChange={(e) => setRoom(e.target.value)} />
+                <input className = "input-style" type='text'  value={joinRoomVal} onChange={(e) => setJoinRoomVal(e.target.value)} />
                 <button className = 'white-button' onClick={(e) => { joinroom(e) }}>Join Room</button>
-            </form>
+            </div>
         </div>
     )
 }

@@ -1,23 +1,20 @@
 "use client"
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import Tile from './tile'
-import { v4 as uuid } from 'uuid'
-import LeaderBoard from './leaderboard'
-import {supabaseBrowser} from '@/lib/supabase/browser'
-import { getPlayersArrayAtPosition } from '@/utils/game_lib'
 import Controls from './controls'
-import useStore from '@/store/store'
+import { useParams } from 'next/navigation'
+import { v4 as uuid } from 'uuid'
+import { supabaseBrowser } from '@/lib/supabase/browser'
+import { getPlayersArrayAtPosition } from '@/utils/game_lib'
+import { useRouter } from 'next/navigation'
+import { useQuery } from '@tanstack/react-query'
+import { data } from '@/lib/constant/users'
+import axios from 'axios'
 
-const page = () => {
+const GameBoard = ({gameState}) => {
 
-  const {users, setUsers} = useStore();
   const noOfTiles = 40
-  const [tiles,setTiles] = useState(new Array(noOfTiles).fill(0))
-  const supabase = supabaseBrowser()
-
-  useEffect(()=>{
-
-  },[])
+  const [tiles, setTiles] = useState(new Array(noOfTiles).fill(0))
 
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
@@ -26,22 +23,18 @@ const page = () => {
 
   return (
     <div className='w-[550px] h-[550px] flex flex-col'>
-      
-      {JSON.stringify(users)}
-
       <div className='w-full flex justify-between'>
-        { users &&
+        {
           tiles1.map((el, index) => {
-            return <Tile key={uuid()} players={getPlayersArrayAtPosition(index, users)} />
+            return <Tile key={uuid()} players={getPlayersArrayAtPosition(index, gameState.current)} />
           })
         }
       </div>
-
       <div className='flex justify-between flex-grow relative'>
         <div className='flex  flex-col-reverse justify-between'>
           {
-            users && tiles4.map((el, index) => {
-              return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 31, users)} />
+            tiles4.map((el, index) => {
+              return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 31, gameState.current)} />
             })
           }
         </div>
@@ -50,8 +43,8 @@ const page = () => {
 
         <div className='flex flex-col justify-between'>
           {
-            users && tiles2.map((el, index) => {
-              return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 11, users)} />
+            tiles2.map((el, index) => {
+              return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 11, gameState.current)} />
             })
           }
         </div>
@@ -59,8 +52,8 @@ const page = () => {
 
       <div className='w-full flex flex-row-reverse justify-between'>
         {
-          users && tiles3.map((el, index) => {
-            return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 20, users)} />
+          tiles3.map((el, index) => {
+            return <Tile key={uuid()} players={getPlayersArrayAtPosition(index + 20, gameState.current)} />
           })
         }
       </div>
@@ -68,4 +61,4 @@ const page = () => {
   )
 }
 
-export default page
+export default GameBoard

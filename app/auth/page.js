@@ -30,7 +30,7 @@ export default function Page() {
                         <div className="bg-white p-2 rounded-[6px] absolute left-1">
                             <FcGoogle />
                         </div>
-                        <h2 className="text-white font-semibold">Sign In with Google</h2>
+                        <p className="text-white font-semibold">Sign In with Google</p>
                     </button>
                 {/* </div> */}
                 <div className="glowBox -z-10"></div>

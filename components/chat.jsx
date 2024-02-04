@@ -2,20 +2,23 @@
 import React from 'react'
 import { useRouter } from 'next/navigation'
 import useStore from '@/store/store'
-const Chat = () => {
- const router = useRouter()
-  const leaveRoom = () => {
-    localStorage.clear('roomId')
-    localStorage.clear('user')
-    router.push('/room')
-  }
+import { useParams } from 'next/navigation'
+import useUser from '@/hooks/useUser'
 
-  const {gameroom,user} = useStore();
+const Chat = () => {
+
+  const router = useRouter()
+  const user = useUser();
+  const { roomID } = useParams()
+
+  if(user.isError){
+    router.push('/auth')
+  }
   return (
     <div className='p-2'>
-        <p className='text-white text-sm'>Room : {gameroom}</p>
-        <p className='text-white text-sm'>User : {user}</p>
-        <button onClick={()=>{leaveRoom()}} className='red-button w-full text-sm'>◀ Leave Room</button>
+      {roomID && <p className='text-white text-sm'>Room : {roomID}</p>}
+      {user && <p className='text-white text-sm'>User : {user?.data?.display_name}</p>}
+      {/* <button onClick={} className='red-button w-full text-sm'>◀ Leave Room</button> */}
     </div>
   )
 }

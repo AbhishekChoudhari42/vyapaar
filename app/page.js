@@ -5,7 +5,7 @@ import React from 'react'
 const page = () => {
   
   const {isFetching,data} = useUser();
-
+  // console.log(data)
   return (
     <div>home</div>
   )

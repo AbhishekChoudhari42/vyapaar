@@ -25,9 +25,8 @@ export default function useUser() {
 					.eq("id", data.session.user.id)
 					.single();
 
-				return user;
+					return user
 			}
-			return initUser;
 		},
 	});
 }

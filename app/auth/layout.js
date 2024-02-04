@@ -5,8 +5,6 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
  return (
-    <html lang="en">
-      <body className="p-2 w-screen h-screen bg-transparent">{children}</body>
-    </html>
+      <div className="p-2 w-screen h-screen bg-transparent">{children}</div>
   )
 }

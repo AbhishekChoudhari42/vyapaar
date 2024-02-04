@@ -3,6 +3,14 @@ import { NextResponse } from "next/server";
 import { protectedRoutes
  } from "./lib/constant/protectedRoutes";
 
+function checkRoutes(arr,route){
+	for(let i = 0 ; i < arr.length ; i++){
+		if(route.includes(arr[i])){
+			return true
+		}
+	}
+	return false
+} 
 export async function middleware(request) {
 	let response = NextResponse.next({
 		request: {
@@ -64,7 +72,7 @@ export async function middleware(request) {
 		}
 		return response;
 	} else {
-		if (protectedRoutes.includes(url.pathname)) {
+		if (checkRoutes(protectedRoutes,url.pathname)) {
 			return NextResponse.redirect(
 				new URL("/auth?next=" + url.pathname, request.url)
 			);

@@ -12,18 +12,16 @@ const Controls = () => {
     const rollDice = async (setGamecontrol) => {
         // API call with username details
         // returns random number 
-        // broadcast the number with message "user __ got {random number}"
     }
 
     const endTurn = () => {
         // API call with Transaction details if transaction required
         // changes current user turn to user next username
-        // returns success or error status
     }
     
     return (
         <div className='h-full flex-grow p-2'>
-            <div className='border-[1px] border-white/30 h-full w-full flex justify-center items-center'>
+            <div className='border-[1px] border-white/30 rounded-md h-full w-full flex justify-center items-center'>
                 {/* dice result */}
                 <div className='absolute top-6 rounded-md left-1/2 -translate-x-1/2 w-20 h-20 text-white font-semibold text-6xl border-[1px] flex justify-center items-center'>
                     {6}
