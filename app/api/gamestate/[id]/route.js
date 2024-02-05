@@ -12,7 +12,7 @@ export async function GET(request,{params}){
         const gamestate = JSON.parse(res)[0].gamestate
         redis.disconnect()
 
-        if(gamestate[username].pos){
+        if(gamestate[username]){
             console.log(username)
             if(res){
                 return new Response(JSON.stringify({res,message:'gamestate received',success:true}));
