@@ -3,6 +3,7 @@ import useStore from '@/store/store'
 import { supabaseBrowser } from '../../lib/supabase/browser'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, createContext } from 'react'
+import { QueryClient } from '@tanstack/react-query'
 
 export const RealtimeContext = createContext({ users: {}, error: false })
 
@@ -12,15 +13,16 @@ const RealtimeProvider = ({ children }) => {
     // const { roomID } = useStore()
     const supabase = supabaseBrowser(roomID)
     const channel = roomID ? supabase.channel(roomID) : null
-
+    const queryClient = new QueryClient()
     useEffect(() => {
-
+        
         if (channel) {
             const sub = channel.on(
                 'broadcast',
                 { event: 'joinroom' },
                 (payload) => {
-                    // refresh room entry queue
+                    // refresh fetch game
+                    queryClient.invalidateQueries('game')
                     alert(JSON.stringify(payload))
                 }
             ).subscribe()

@@ -5,10 +5,10 @@ import React from "react";
 
 const initUser = {
 	created_at: "",
-	display_name: "",
+	display_name: false,
 	email: "",
 	id: "",
-	image_url: "",
+	image_url: false,
 };
 
 export default function useUser() {
@@ -27,6 +27,7 @@ export default function useUser() {
 
 					return user
 			}
+			return initUser
 		},
 	});
 }

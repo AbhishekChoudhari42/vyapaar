@@ -15,7 +15,7 @@ const GameBoard = ({gameState}) => {
 
   const noOfTiles = 40
   const [tiles, setTiles] = useState(new Array(noOfTiles).fill(0))
-
+  console.log(gameState.current)
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
   const tiles3 = tiles.slice(20, 31)
