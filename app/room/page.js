@@ -15,7 +15,7 @@ const page = () => {
     const [createRoomVal, setCreateRoomVal] = useState('')
     const [joinRoomVal, setJoinRoomVal] = useState('')
     const user = useUser()
-
+    console.log(user)
     const router = useRouter();
 
     useEffect(() => {
@@ -26,6 +26,8 @@ const page = () => {
 
     const joinroom = async (e) => {
         e.preventDefault();
+        const res = await axios.post('/api/room/join',{roomID:joinRoomVal,username:user?.data?.display_name})
+        console.log(res)
     }
     const roomCreation = async (e) => {
         e.preventDefault();

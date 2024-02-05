@@ -10,11 +10,13 @@ import { useRouter } from 'next/navigation'
 
 // import { useRouter } from 'next/dist/client/router'
 const page = () => {
+  
   const router = useRouter()
   const supabase = supabaseBrowser();
   const { roomID } = useParams()
   const gameState = useRef({})
   console.log(roomID)
+  
   const result = useQuery({
     queryKey: ['game'],
     queryFn: async () => {
@@ -23,6 +25,7 @@ const page = () => {
     retry: 3,
     staleTime: 10
   })
+
   if (result?.data?.data?.success) {
       const game_state = JSON.parse(result?.data?.data?.res)[0].gamestate
       gameState.current = game_state
