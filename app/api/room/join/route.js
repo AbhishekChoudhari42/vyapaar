@@ -13,7 +13,7 @@ export async function POST(request) {
 
         const { roomID, username } = await request.json();
 
-        let u_name = username.replace(" ", "") + Math.floor(Math.random()*100000)
+        let u_name = username.replace(" ", "")
         let val = { pos: 0, bal: 1500, prop: [] }
         const gameStarted = await redis.get(`gamestart:${roomID}`)
         console.log(gameStarted, "===> gameStarted")
@@ -24,8 +24,9 @@ export async function POST(request) {
             
             if (currentState) {
                 console.log(currentState, "===> currentState")
-                
-                if (!JSON.parse(currentState)[0][u_name] && JSON.parse(currentState)[0].users.length <= 4) {
+
+                if (!JSON.parse(currentState)[0][u_name] && !JSON.parse(currentState)[0].users.includes(u_name) && JSON.parse(currentState)[0].users.length <= 4) {
+                    console.log("adding usser")
                     const tx = redis.multi()
                     tx.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}`, JSON.stringify(val))
                     tx.call('JSON.ARRAPPEND',`room:${roomID}`,'$.users',`"${u_name}"`)

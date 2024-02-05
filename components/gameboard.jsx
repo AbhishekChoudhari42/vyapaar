@@ -11,11 +11,11 @@ import { useQuery } from '@tanstack/react-query'
 import { data } from '@/lib/constant/users'
 import axios from 'axios'
 
-const GameBoard = ({gameState}) => {
+const GameBoard = ({gameState, roomID}) => {
 
   const noOfTiles = 40
   const [tiles, setTiles] = useState(new Array(noOfTiles).fill(0))
-  console.log(gameState.current)
+  console.log(gameState.current,"all players")
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
   const tiles3 = tiles.slice(20, 31)
@@ -39,7 +39,7 @@ const GameBoard = ({gameState}) => {
           }
         </div>
 
-        <Controls />
+        <Controls roomID={roomID} gameState={gameState}/>
 
         <div className='flex flex-col justify-between'>
           {

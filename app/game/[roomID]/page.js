@@ -4,7 +4,7 @@ import Chat from '@/components/chat'
 import axios from 'axios'
 import { supabaseBrowser } from '@/lib/supabase/browser'
 import {useParams} from 'next/navigation'
-import { useQuery } from '@tanstack/react-query'
+import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { useRouter } from 'next/navigation'
 
@@ -20,11 +20,13 @@ const page = () => {
   const result = useQuery({
     queryKey: ['game'],
     queryFn: async () => {
+      console.log("Fetching again")
       return axios.get(`/api/gamestate/${roomID}`)
     },
     retry: 3,
-    staleTime: 10
+    staleTime: 0
   })
+
 
   if (result?.data?.data?.success) {
       const game_state = JSON.parse(result?.data?.data?.res)[0].gamestate
@@ -41,7 +43,7 @@ return (
         <Chat/>
       </div>
       <div className='flex flex-[3] justify-center items-center'>
-      {<Gameboard gameState={gameState}/>}
+      {<Gameboard gameState={gameState} roomID={roomID}/>}
       </div>
       <div className='flex-1 border-[1px] border-white/30 h-screen'>
       </div>

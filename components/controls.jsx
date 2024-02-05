@@ -1,22 +1,46 @@
 "use client"
 import React, { useState } from 'react'
 import {supabaseBrowser} from '@/lib/supabase/browser'
+import axios from 'axios'
 
 import useStore from '@/store/store'
+import { QueryClient, useMutation, useQueryClient } from '@tanstack/react-query'
+import useUser from '@/hooks/useUser'
 
-const Controls = () => {
+const Controls = ({roomID, gameState}) => {
 
     const [ gamecontrol, setGameControl ] = useState({ currentTurn: true , diceRolling:false })
+    const user = useUser();
     const supabase = supabaseBrowser()
-    
+
     const rollDice = async (setGamecontrol) => {
-        // API call with username details
-        // returns random number 
+        const result = await axios.post("/api/dice",{roomID});
+        const {diceRoll} = result.data;
+        return diceRoll;
+    }
+
+    const queryClient = useQueryClient();
+    const { mutateAsync } = useMutation({
+        mutationFn:()=>{rollDice()} ,
+        onSuccess: () =>{
+            isRolling()
+            console.log("sucessful")
+
+        }
+    })
+
+    const isRolling = () =>{
+        const username = user.data.display_name;
+        console.log(username, gameState, "rolling")
     }
 
     const endTurn = () => {
         // API call with Transaction details if transaction required
         // changes current user turn to user next username
+    }
+
+    const buyProperty = () =>{
+
     }
     
     return (
@@ -29,7 +53,7 @@ const Controls = () => {
                 {
                     gamecontrol?.currentTurn &&
                     <div className='flex flex-col gap-2'>
-                        <button onClick={() => { rollDice() }} className={`white-button ${gamecontrol?.diceRolling ? 'fade' :''}`}>Roll dice</button>
+                        <button onClick={() => { mutateAsync() }} className={`white-button ${gamecontrol?.diceRolling ? 'fade' :''}`}>Roll dice</button>
                         <button onClick={() => { endTurn() }} className='white-button'>End turn</button>
                     </div>
                 }
