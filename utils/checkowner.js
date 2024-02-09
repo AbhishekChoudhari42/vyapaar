@@ -1,3 +1,4 @@
+//checks if the current user owns the given property
 export async function checkowner(users, currentUser,property){
     if(users[currentUser]?.properties.includes(property.name)){
         return true;
@@ -5,11 +6,12 @@ export async function checkowner(users, currentUser,property){
     return false;
 }
 
-export async function findowner(users, propertyname){
+//finds the owner of a given property
+export async function findowner(gamestate, propertyname){
 
-    for (const player in users) {
-        if (users.hasOwnProperty(player)) {
-            if (users[player].properties.includes(propertyname)) {
+    for (const player in gamestate) {
+        if (gamestate.hasOwnProperty(player)) {
+            if (gamestate[player].prop.includes(propertyname)) {
                 return player;
             }
         }

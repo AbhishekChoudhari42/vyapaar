@@ -32,7 +32,7 @@ export async function POST(request) {
                     tx.call('JSON.ARRAPPEND',`room:${roomID}`,'$.users',`"${u_name}"`)
                     const res = tx.exec()
                     // const res = await redis.call('JSON.SET', `room:${roomID}`, `$.${u_name}`, JSON.stringify(val))
-                    redis.disconnect()
+                    redis.quit()
                     channel.send({
                         type: 'broadcast',
                         event: 'joinroom',

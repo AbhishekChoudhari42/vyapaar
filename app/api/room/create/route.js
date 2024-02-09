@@ -15,7 +15,7 @@ export async function POST(request){
         tx.set(`gamestart:${roomID}`,0)
         const res = await tx.exec()
 
-        redis.disconnect()
+        redis.quit()
         return new Response(JSON.stringify({res,message:'room created',success:true}));
     }
     catch(error){

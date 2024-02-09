@@ -13,7 +13,7 @@ export async function GET(request,{params}){
 
         const username = data?.user.user_metadata.name.replace(" ","");
         const gamestate = JSON.parse(res)[0].gamestate
-        redis.disconnect()
+        redis.quit()
 
         if(gamestate[username]){
             console.log(username)

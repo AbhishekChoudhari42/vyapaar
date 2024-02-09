@@ -10,12 +10,19 @@ import { useRouter } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { data } from '@/lib/constant/users'
 import axios from 'axios'
+import useUser from '@/hooks/useUser'
 
-const GameBoard = ({gameState, roomID}) => {
+const GameBoard = ({gameState, roomID,game_state}) => {
+
+  //show controls logic:
+  const user = useUser();
+  const username = user?.data?.display_name.replace(" ","");
+  const currentPlayer = game_state?.users[game_state.current];
+  // console.log("USERNAME",username," curr player: ", currentPlayer)
 
   const noOfTiles = 40
   const [tiles, setTiles] = useState(new Array(noOfTiles).fill(0))
-  console.log(gameState.current,"all players")
+  // console.log(game_state.current,"all players")
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
   const tiles3 = tiles.slice(20, 31)
@@ -39,7 +46,7 @@ const GameBoard = ({gameState, roomID}) => {
           }
         </div>
 
-        <Controls roomID={roomID} gameState={gameState}/>
+        {currentPlayer==username?<Controls roomID={roomID} gameState={gameState} game_state={game_state}/>:""}
 
         <div className='flex flex-col justify-between'>
           {

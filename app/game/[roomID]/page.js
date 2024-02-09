@@ -15,7 +15,8 @@ const page = () => {
   const supabase = supabaseBrowser();
   const { roomID } = useParams()
   const gameState = useRef({})
-  console.log(roomID)
+  // console.log(roomID)
+  let game_state;
   
   const result = useQuery({
     queryKey: ['game'],
@@ -29,9 +30,10 @@ const page = () => {
 
 
   if (result?.data?.data?.success) {
-      const game_state = JSON.parse(result?.data?.data?.res)[0].gamestate
-      gameState.current = game_state
-      console.log(gameState.current)
+      game_state = JSON.parse(result?.data?.data?.res)[0]
+      // console.log(game_state.users[game_state.current]," is current player")
+      gameState.current = game_state.gamestate
+      // console.log(gameState.current,"gameState")
   }
   if(result.isError){
     router.push('/room')
@@ -43,7 +45,7 @@ return (
         <Chat/>
       </div>
       <div className='flex flex-[3] justify-center items-center'>
-      {<Gameboard gameState={gameState} roomID={roomID}/>}
+      {<Gameboard gameState={gameState} roomID={roomID} game_state={game_state}/>}
       </div>
       <div className='flex-1 border-[1px] border-white/30 h-screen'>
       </div>

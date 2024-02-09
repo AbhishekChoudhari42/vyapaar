@@ -34,6 +34,22 @@ const RealtimeProvider = ({ children }) => {
                     console.log("broadcast dice: ",payload.payload.message)
                 }
             )
+            .on(
+                'broadcast',
+                { event: 'endturn' },
+                (payload) => {
+                    queryClient.invalidateQueries(['game'])
+                    console.log("broadcast End Turn: ",payload.payload.message)
+                }
+            )
+            .on(
+                'broadcast',
+                { event: 'buyprop' },
+                (payload) => {
+                    queryClient.invalidateQueries(['game'])
+                    console.log("broadcast bought prop: ",payload.payload.message)
+                }
+            )
             .subscribe()
 
             return () => sub.unsubscribe()

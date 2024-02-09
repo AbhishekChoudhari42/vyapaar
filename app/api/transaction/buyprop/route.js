@@ -1,34 +1,35 @@
+import tabledata from "@/lib/constant/tabledata";
+import { supabaseRealTime } from "@/lib/supabase/realtime";
 import redis_client from "@/lib/initRedis";
 
 export async function POST(request) {
     try {
-        const { users, currentUser, BoardData } = await request.json();
-        // console.log(currentUser);
-        const currPlayerPos = users[currentUser].pos;
-        const currPlayerBalance = users[currentUser].balance - BoardData[currPlayerPos].cost;
-        const propBought = BoardData[currPlayerPos].name;
-        const propBoughtId = BoardData[currPlayerPos].id;
-        const existingProp = users[currentUser].properties
-        const updatedJSON = JSON.stringify({
-            "balance": currPlayerBalance,
-            "pos": currPlayerPos,
-            "properties": [...existingProp, propBought]
+        const { roomID } = await request.json();
+        const redis = redis_client();
+        const supabase = supabaseRealTime()
+        const channel = supabase.channel(roomID)
+        //current user's data
+        const currentState = await redis.call('JSON.GET', `room:${roomID}`, '$')
+        const currentStateParsed =  JSON.parse(currentState)[0];
+        const currentPlayerIndex = currentStateParsed?.current;
+        const currentPlayer = currentStateParsed?.users[currentPlayerIndex];
+        const currentPlayerState = currentStateParsed.gamestate[currentPlayer];
+        const currentTile = tabledata[currentPlayerState?.pos]
+        const toUpdate = JSON.stringify({
+            "bal": currentPlayerState?.bal - currentTile?.cost,
+            "pos": currentPlayerState?.pos,
+            "prop": [...currentPlayerState?.prop, currentTile?.name]
+        })
+        console.log(toUpdate)
+        const resp = await redis.call("JSON.SET", `room:${roomID}`, "$.gamestate."+currentPlayer, toUpdate);
+
+        await channel.send({
+            type: 'broadcast',
+            event: 'buyprop',
+            payload: { message: "some prop bought" },
         })
 
-
-        await redis_client.call("JSON.SET", "game",  "$."+currentUser, updatedJSON);
-
-        const response = {
-            users,
-            currentUser,
-            BoardData,
-            currPlayerBalance,
-            propBought,
-            propBoughtId,
-            currPlayerPos
-        };
-
-        return new Response(JSON.stringify(response));
+        return new Response(JSON.stringify(resp));
     } catch (error) {
         console.error('Error processing buyProp request:', error);
         return new Response('Internal Server Error', { status: 500 });

@@ -5,7 +5,8 @@ import redis_client from "@/lib/initRedis";
 
 export async function POST(request) {
     const { roomID } = await request.json();
-    // const diceRoll1 = 12;
+    // const diceRoll1 = -12;
+    // const diceRoll2 = 0;
     const diceRoll1 = Math.ceil(Math.random() * 6);
     const diceRoll2 = Math.ceil(Math.random() * 6);
     const diceRollSum = (diceRoll1+diceRoll2);
@@ -29,16 +30,16 @@ export async function POST(request) {
     const currentPlayer =  JSON.parse(currentState)[0].current;
     const newPlayer = (currentPlayer+1)%(JSON.parse(currentState)[0].users?.length);
 
+
     if(JSON.parse(currentState)[0].users[currentPlayer] == u_name){
         const prevPosition = JSON.parse(currentState)[0].gamestate[u_name].pos
         const newPosition = (prevPosition + diceRollSum)%40;
         // setting new position
-        const tx = redis.multi()
-        tx.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, newPosition)
-        tx.call('JSON.SET', `room:${roomID}`, `$.current`, newPlayer)
+        
+        redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, newPosition)
+        // tx.call('JSON.SET', `room:${roomID}`, `$.current`, newPlayer)
 
-        const res = await tx.exec();
-        redis.disconnect();
+        redis.quit()
         
         await channel.send({
             type: 'broadcast',
@@ -50,7 +51,7 @@ export async function POST(request) {
         return new Response({message:"Wait for your turn",success:false});
     }
 
-    return new Response({message:"player position changed",success:true,diceRoll});
+    return new Response(JSON.stringify({message:"player position changed",success:true,diceRoll:{ diceRoll1, diceRoll2 }}));
 
 }
 
