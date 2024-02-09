@@ -27,8 +27,11 @@ const page = () => {
     const joinroom = async (e) => {
         e.preventDefault();
         const res = await axios.post('/api/room/join',{roomID:joinRoomVal,username:user?.data?.display_name})
-        console.log(res)
+        if(res.data.success){
+            router.push(`/game/${createRoomVal}`)
+        }
     }
+
     const roomCreation = async (e) => {
         e.preventDefault();
         const data = await createRoom(createRoomVal,user?.data?.display_name)
