@@ -2,13 +2,14 @@ import { supabaseServer } from "@/lib/supabase/server";
 import { supabaseRealTime } from "@/lib/supabase/realtime";
 import { headers } from "@/next.config";
 import redis_client from "@/lib/initRedis";
+import { handleLanding } from "@/utils/handlelanding";
 
 export async function POST(request) {
     const { roomID } = await request.json();
-    // const diceRoll1 = -12;
-    // const diceRoll2 = 0;
-    const diceRoll1 = Math.ceil(Math.random() * 6);
-    const diceRoll2 = Math.ceil(Math.random() * 6);
+    const diceRoll1 = 1;
+    const diceRoll2 = 0;
+    // const diceRoll1 = Math.ceil(Math.random() * 6);
+    // const diceRoll2 = Math.ceil(Math.random() * 6);
     const diceRollSum = (diceRoll1+diceRoll2);
     const diceRoll = JSON.stringify({ diceRoll1, diceRoll2 });
     
@@ -37,7 +38,6 @@ export async function POST(request) {
         // setting new position
         
         redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, newPosition)
-        // tx.call('JSON.SET', `room:${roomID}`, `$.current`, newPlayer)
 
         redis.quit()
         
@@ -46,6 +46,9 @@ export async function POST(request) {
             event: 'dice',
             payload: { message: diceRollSum },
         })
+
+        handleLanding(roomID, u_name,newPosition)
+
     }
     else{
         return new Response({message:"Wait for your turn",success:false});
