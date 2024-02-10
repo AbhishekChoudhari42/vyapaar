@@ -68,20 +68,18 @@ const Controls = ({roomID, gameState, game_state}) => {
         // API call with Transaction details if transaction required
         // changes current user turn to user next username
     }
-    
-    function isTileBuyable(tileName,tileKey, playerState) {
+
+    function isTileBuyable(tileKey, playerState) {
         const nonBuyableTileKeys = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
         const isNonBuyableTile = nonBuyableTileKeys.includes(tileKey); //if true, not buyable
-        console.log(tileKey)
     
         for (const playerName in playerState) {
             const playerProps = playerState[playerName].prop;
-            if (playerProps.includes(tileName) || isNonBuyableTile) {
+            if (playerProps?.includes(tileKey) || isNonBuyableTile) {
                 // console.log(`${playerName} owns ${tileName}`);
                 return false; // Property is owned, not buyable
             }
         }
-    
         return true; // Tile is buyable
     }
     
@@ -118,7 +116,7 @@ const Controls = ({roomID, gameState, game_state}) => {
                         
                         {/* {checkBuyable(playerPosition)?"":<button onClick={() => { buyProperty() }} className='white-button'>Buy Property</button>}  */}
 
-                        {isTileBuyable(tabledata[playerPosition]?.name, playerPosition, game_state?.gamestate) ? (
+                        {isTileBuyable(playerPosition, game_state?.gamestate) ? (
                             <button onClick={() => buyProperty()} className='white-button'>Buy Property</button>
                         ) : null}
 
