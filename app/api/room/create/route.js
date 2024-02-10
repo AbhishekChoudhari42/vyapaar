@@ -10,12 +10,19 @@ export async function POST(request){
         let u_name = username.replace(" ","")
         let val = {pos:0,bal:1500,prop:[]}
 
+        const gameExists = await redis.exists(`room:${roomID}`)
+        console.log(gameExists,"gameExists")
+        if(gameExists){
+            await redis.quit()
+            return new Response(JSON.stringify({message:'Room exists already',success:false}));
+        }
+
         const tx = redis.multi();
         tx.call('JSON.SET',`room:${roomID}`,'$',JSON.stringify({current:0,gamestate:{[u_name]:val},users:[u_name]}))
         tx.set(`gamestart:${roomID}`,0)
         const res = await tx.exec()
 
-        redis.quit()
+        await redis.quit()
         return new Response(JSON.stringify({res,message:'room created',success:true}));
     }
     catch(error){

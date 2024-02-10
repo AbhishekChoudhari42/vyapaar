@@ -13,11 +13,9 @@ export async function GET(request,{params}){
 
         const username = data?.user.user_metadata.name.replace(" ","");
         const gamestate = JSON.parse(res)[0].gamestate
-        redis.quit()
+        await redis.quit()
 
-        if(gamestate[username]){
-            console.log(username)
-            
+        if(Object.keys(gamestate).includes(username)){            
             if(res){
                 return new Response(JSON.stringify({res,message:'gamestate received',success:true}));
             }else{

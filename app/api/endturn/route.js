@@ -20,6 +20,6 @@ export async function POST(request){
         payload: { message: "turn ended" },
     })
 
-    redis.quit()
+    await redis.quit()
     return new Response("END TURN")
 }
