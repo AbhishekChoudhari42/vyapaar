@@ -1,9 +1,12 @@
-import React from 'react'
+"use client"
+import React, { useContext } from 'react'
+import { RealtimeContext } from './context/realtime-provider'
 
-const leaderboard = () => {
+const LeaderBoard = () => {
+
   return (
-    <div>leaderboard</div>
+    <div>LeaderBoard</div>
   )
 }
 
-export default leaderboard
+export default LeaderBoard

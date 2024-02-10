@@ -36,15 +36,15 @@ export async function POST(request) {
         const newPosition = (prevPosition + diceRollSum)%40;
         // setting new position
         
-        redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, newPosition)
+        await redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, newPosition)
         // tx.call('JSON.SET', `room:${roomID}`, `$.current`, newPlayer)
 
-        redis.quit()
+        await redis.quit()
         
         await channel.send({
             type: 'broadcast',
             event: 'dice',
-            payload: { message: diceRollSum },
+            payload: { message: diceRollSum ,user:u_name},
         })
     }
     else{
