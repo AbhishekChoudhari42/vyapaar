@@ -27,7 +27,6 @@ const page = () => {
     staleTime: 0
   })
 
-
   if (result?.data?.data?.success) {
       game_state = JSON.parse(result?.data?.data?.res)[0]
       gameState.current = game_state.gamestate
@@ -36,6 +35,8 @@ const page = () => {
       result.
       router.push('/room')
   }
+
+  // console.log(game_state?.gamestate,"RESULT")
 
 return (   
     <div className=' max-w-[1300px] w-screen h-screen flex justify-between items-center'>
@@ -46,7 +47,7 @@ return (
       {result?.data?.data?.success && <Gameboard gameState={gameState} roomID={roomID} game_state={game_state}/>}
       </div>
       <div className='flex-1 border-[1px] border-white/30 h-screen'>
-        {result?.data?.data?.success && <LeaderBoard/>}
+        {result?.data?.data?.success && <LeaderBoard game_state={game_state}/>}
       </div>
     </div>
   )

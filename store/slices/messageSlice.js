@@ -1,8 +1,8 @@
 const messageSlice = (set) =>({
-    messages: [{payload:{message:'test'}}],
+    messages: [],
     currentMessage : '',
     setCurrentMessage:(value) => set(()=> ({currentMessage:value})),
-    addMessage: (message) => set((state) => ({ messages : [...state.messages,message] })),
+    setMessages: (currentMessage) => set((state) => ({ messages : [...state.messages, currentMessage] })),
 })
 
 export default messageSlice

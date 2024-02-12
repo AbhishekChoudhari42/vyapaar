@@ -6,12 +6,11 @@ import { handleLanding } from "@/utils/handlelanding";
 
 export async function POST(request) {
     const { roomID } = await request.json();
-    const diceRoll1 = 0;
-    const diceRoll2 = 0;
-    // const diceRoll1 = Math.ceil(Math.random() * 6);
-    // const diceRoll2 = Math.ceil(Math.random() * 6);
+    // const diceRoll1 = 0;
+    // const diceRoll2 = 0;
+    const diceRoll1 = Math.ceil(Math.random() * 6);
+    const diceRoll2 = Math.ceil(Math.random() * 6);
     const diceRollSum = (diceRoll1+diceRoll2);
-    const diceRoll = JSON.stringify({ diceRoll1, diceRoll2 });
     
     const supabase = supabaseRealTime()
     const channel = supabase.channel(roomID)

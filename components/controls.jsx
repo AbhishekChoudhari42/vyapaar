@@ -84,14 +84,14 @@ const Controls = ({roomID, gameState, game_state}) => {
     }
     
 
-    useEffect(()=>{
+    // useEffect(()=>{
 
-        if(gamecontrol.diceRolled){
+    //     if(gamecontrol.diceRolled){
  
-            // console.log(user.data.display_name," landed on",playerPosition," at ",tabledata[playerPosition]?.type)
-        }
+    //         // console.log(user.data.display_name," landed on",playerPosition," at ",tabledata[playerPosition]?.type)
+    //     }
         
-    },[gamecontrol])
+    // },[gamecontrol])
 
     let playerPosition = (game_state?.gamestate[user.data.display_name.replace(" ","")].pos);
 
@@ -109,23 +109,13 @@ const Controls = ({roomID, gameState, game_state}) => {
                 {
                     gamecontrol?.currentTurn &&
                     <div className='flex flex-col gap-2'>
-                        {/* <button onClick={() => { mutateAsync() }} className={`white-button ${gamecontrol?.diceRolled ? 'fade' :''}`}>Roll dice</button> */}
                         
                         <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
-
-                        
-                        {/* {checkBuyable(playerPosition)?"":<button onClick={() => { buyProperty() }} className='white-button'>Buy Property</button>}  */}
 
                         {isTileBuyable(playerPosition, game_state?.gamestate) ? (
                             <button onClick={() => buyProperty()} className='white-button'>Buy Property</button>
                         ) : null}
 
-
-                        {/* <button onClick={() => { buyProperty() }} className={`white-button ${checkBuyable(playerPosition)? 'fade' :''}`}>Buy Property</button> */}
-                        
-                        {/* <h1>Landed on: {tabledata[(game_state?.gamestate[user.data.display_name.replace(" ","")].pos+dice)%40]?.name}</h1> */}
-                        {/* <h1>{checkBuyable((game_state?.gamestate[user.data.display_name.replace(" ","")].pos+dice)%40)?"Can Buy":"Not Buyable"}</h1> */}
-                        {/* {findowner(game_state?.gamestate, "abc")} */}
                     </div>
                 }
             </div>

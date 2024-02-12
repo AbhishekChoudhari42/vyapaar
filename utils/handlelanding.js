@@ -3,6 +3,7 @@ import redis_client from "@/lib/initRedis"
 import rentmanager from "./rent/rentmanager";
 import { checkowner, isbuyable, findowner } from "./checkowner";
 import specialTiles from "./specialTiles";
+import { supabaseRealTime } from "@/lib/supabase/realtime";
  
 export async function handleLanding(roomID, u_name, newPosition){
     const redis = redis_client();
@@ -56,7 +57,21 @@ export async function handleLanding(roomID, u_name, newPosition){
 
         console.log(result?.title, result?.message)
     }
+    else if(landedTile.type === "jail" || landedTile.type === "freeParking"){
+        return 
+    }
+    else if(landedTile.type === "goToJail"){
+        await redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, 10)
+         redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, 10)
+    }
 
+    const supabase = supabaseRealTime()
+    const channel = supabase.channel(roomID)
+    await channel.send({
+        type: 'broadcast',
+        event: 'handlelanding',
+        payload: { message: "handling landing"},
+    })
     await redis.quit()
     // console.log(JSON.parse(currentState)[0].gamestate[u_name])
     // console.log("HANDLING LANDING",print.gamestate[u_name].pos)
