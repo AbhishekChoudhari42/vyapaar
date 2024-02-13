@@ -104,6 +104,14 @@ const RealtimeProvider = ({ children }) => {
                         setMessages(payload.payload.message)
                     }
                 )
+                .on(
+                    'broadcast',
+                    { event: 'jailrelease' },
+                    (payload) => {
+                        queryClient.invalidateQueries(['game'])
+                        console.log(payload.payload.message)
+                    }
+                )
                 .subscribe()
 
             return () => sub.unsubscribe()

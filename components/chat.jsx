@@ -45,6 +45,7 @@ const Chat = () => {
       <button className = 'red-button' onClick={(e) => { leaveroom(e) }}>Leave Room</button>
       {roomID && <p className='text-white text-sm'>Room : {roomID}</p>}
       {user && <p className='text-white text-sm'>User : {user?.data?.display_name}</p>}
+      <br/> <br/>
 
       <input value={currentMessage} className='bg-blue-500' type="text" onChange={(e) => setCurrentMessage(e.target.value)} />
       <button onClick={() => broadcast(currentMessage, channel)} className='bg-black border '>broadcast event</button>

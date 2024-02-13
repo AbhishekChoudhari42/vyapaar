@@ -22,7 +22,7 @@ const GameBoard = ({gameState, roomID,game_state}) => {
 
   const noOfTiles = 40
   const [tiles, setTiles] = useState(new Array(noOfTiles).fill(0))
-  // console.log(game_state.current,"all players")
+  // console.log(game_state?.injail,"all players")
   const tiles1 = tiles.slice(0, 11)
   const tiles2 = tiles.slice(11, 20)
   const tiles3 = tiles.slice(20, 31)

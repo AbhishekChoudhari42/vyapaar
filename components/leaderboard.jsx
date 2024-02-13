@@ -9,10 +9,10 @@ const LeaderBoard = (game_state) => {
 
   return (
     <div>
-      <div>LeaderBoard</div>
+      <div>LEADERBOARD</div>
       <ul>
         {playerEntries.map(([playerName, playerData], index) => (
-          <li key={playerName}>
+          <li key={uuid()}>
             {playerName} - Balance: {playerData.bal}
           </li>
         ))}

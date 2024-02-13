@@ -9,7 +9,6 @@ import useUser from '@/hooks/useUser'
 import tabledata from '@/lib/constant/tabledata'
 import userSlice from '@/store/slices/userSlice'
 import checkBuyable from '@/utils/checkBuyable'
-// import { findowner } from '@/utils/checkowner'
 
 const Controls = ({roomID, gameState, game_state}) => {
 
@@ -17,9 +16,9 @@ const Controls = ({roomID, gameState, game_state}) => {
     const [dice, setDice] = useState();
 
     const user = useUser();
+    const username = user.data.display_name.replace(" ","");
+    console.log("USJEBNUFE", game_state?.injail.includes(username) )
     const supabase = supabaseBrowser()
-
-    //current player position
     
 
     const rollDice = async (setGamecontrol) => {
@@ -52,7 +51,7 @@ const Controls = ({roomID, gameState, game_state}) => {
     }
 
     const hasRolled = () =>{
-        const username = user.data.display_name;
+        
         if(username.replace(" ","") == game_state.users[game_state.current]){
             return true;
         }
@@ -82,21 +81,18 @@ const Controls = ({roomID, gameState, game_state}) => {
         }
         return true; // Tile is buyable
     }
-    
-
-    // useEffect(()=>{
-
-    //     if(gamecontrol.diceRolled){
- 
-    //         // console.log(user.data.display_name," landed on",playerPosition," at ",tabledata[playerPosition]?.type)
-    //     }
-        
-    // },[gamecontrol])
 
     let playerPosition = (game_state?.gamestate[user.data.display_name.replace(" ","")].pos);
 
     const buyProperty = async () =>{
-        const result = await axios.post("/api/transaction/buyprop",{roomID});
+        await axios.post("/api/transaction/buyprop",{roomID});
+    }
+
+    const jailRelase = async () =>{
+        await axios.post("/api/transaction/jailrelease", {roomID})
+        setGameControl(prevGameControl=>({
+            ...prevGameControl, diceRolled: false
+        }))
     }
     
     return (
@@ -107,7 +103,14 @@ const Controls = ({roomID, gameState, game_state}) => {
                     {6}
                 </div>
                 {
-                    gamecontrol?.currentTurn &&
+                    gamecontrol?.currentTurn == true && game_state?.injail.includes(username) == true ?
+                    <div>
+                        IN JAIL
+                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
+                        {/* <br></br> */}
+                        <button onClick={()=>{ jailRelase()} } className={`white-button`}>{gamecontrol?.diceRolled?null:"Pay fine of 50"}</button>
+                    </div>
+                    :
                     <div className='flex flex-col gap-2'>
                         
                         <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
@@ -124,5 +127,3 @@ const Controls = ({roomID, gameState, game_state}) => {
 }
 
 export default Controls
-
-//Todo: Rent and Tax and Special Cards

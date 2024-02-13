@@ -61,8 +61,10 @@ export async function handleLanding(roomID, u_name, newPosition){
         return 
     }
     else if(landedTile.type === "goToJail"){
-        await redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, 10)
-         redis.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, 10)
+        const tx = redis.multi()
+        tx.call('JSON.SET', `room:${roomID}`, `$.gamestate.${u_name}.pos`, 10)
+        tx.call('JSON.ARRAPPEND', `room:${roomID}`, '$.injail', `"${u_name}"`)
+        await tx.exec()
     }
 
     const supabase = supabaseRealTime()

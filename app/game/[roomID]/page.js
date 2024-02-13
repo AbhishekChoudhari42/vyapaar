@@ -8,6 +8,7 @@ import { QueryClient, useMutation, useQuery } from '@tanstack/react-query'
 import { useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import LeaderBoard from '@/components/leaderboard'
+import Properties from '@/components/properties'
 
 const page = () => {
   
@@ -36,7 +37,8 @@ const page = () => {
       router.push('/room')
   }
 
-  // console.log(game_state?.gamestate,"RESULT")
+  // console.log(game_state?.current,"ihefuhew")
+  // console.log(gameState?.current[game_state?.users[game_state?.current]],"RESULT")
 
 return (   
     <div className=' max-w-[1300px] w-screen h-screen flex justify-between items-center'>
@@ -48,6 +50,8 @@ return (
       </div>
       <div className='flex-1 border-[1px] border-white/30 h-screen'>
         {result?.data?.data?.success && <LeaderBoard game_state={game_state}/>}
+        <br/> <br/>
+        {result?.data?.data?.success && <Properties currentState={gameState?.current}/>}
       </div>
     </div>
   )

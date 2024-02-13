@@ -18,7 +18,6 @@ export async function POST(request) {
         // user data from session
         const { data } = await supaServer.auth.getUser();
         const u_name = data?.user.user_metadata.name.replace(" ", "");
-
         // initial gamestate of user
         let val = { pos: 0, bal: 1500, prop: [] }
         const gameStarted = await redis.get(`gamestart:${roomID}`)
