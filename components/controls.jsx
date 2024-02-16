@@ -11,22 +11,28 @@ import userSlice from '@/store/slices/userSlice'
 import checkBuyable from '@/utils/checkBuyable'
 
 const Controls = ({roomID, gameState, game_state}) => {
+    const { diceRolled,setDiceRolled,currentTurn } = useStore();
+    
 
-    const [ gamecontrol, setGameControl ] = useState({ currentTurn: true , diceRolled:false, buyable: false})
+    // const [ gamecontrol, setGameControl ] = useState({ diceRolled:false})
     const [dice, setDice] = useState();
 
     const user = useUser();
     const username = user.data.display_name.replace(" ","");
-    console.log("USJEBNUFE", game_state?.injail.includes(username) )
     const supabase = supabaseBrowser()
     
 
     const rollDice = async (setGamecontrol) => {
+        // setDiceRolled();
+        // console.log(diceRolled, "DICEEEEEE")
         const result = await axios.post("/api/dice",{roomID});
         const {diceRoll} = result.data;
-        setGameControl(prevGameControl=>({
-            ...prevGameControl, diceRolled: true
-        }))
+        setDiceRolled();
+        //setting diceRolled to true here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: true
+        // }))
+
         setDice(diceRoll?.diceRoll1+diceRoll?.diceRoll2);
         console.log("player rolled")
         return diceRoll;
@@ -42,7 +48,8 @@ const Controls = ({roomID, gameState, game_state}) => {
     })
 
     const handleButtons = () =>{
-        if(gamecontrol.diceRolled){
+        //checking if dircRolled true here
+        if(diceRolled){
             endTurn()
         }
         else{
@@ -60,10 +67,11 @@ const Controls = ({roomID, gameState, game_state}) => {
 
     const endTurn = async () => {
         const result = await axios.post("/api/endturn",{roomID});
-
-        setGameControl(prevGameControl=>({
-            ...prevGameControl, diceRolled: false
-        }))
+        //setting diceRolled false here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: false
+        // }))
+        setDiceRolled();
         // API call with Transaction details if transaction required
         // changes current user turn to user next username
     }
@@ -90,9 +98,11 @@ const Controls = ({roomID, gameState, game_state}) => {
 
     const jailRelase = async () =>{
         await axios.post("/api/transaction/jailrelease", {roomID})
-        setGameControl(prevGameControl=>({
-            ...prevGameControl, diceRolled: false
-        }))
+        //setting diceRolled to false here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: false
+        // }))
+        setDiceRolled();
     }
     
     return (
@@ -102,18 +112,18 @@ const Controls = ({roomID, gameState, game_state}) => {
                 <div className='absolute top-6 rounded-md left-1/2 -translate-x-1/2 w-20 h-20 text-white font-semibold text-6xl border-[1px] flex justify-center items-center'>
                     {6}
                 </div>
-                {
-                    gamecontrol?.currentTurn == true && game_state?.injail.includes(username) == true ?
+                {   //checking gamecontrol on currentTurn, diceRolled bellow
+                    currentTurn == true && game_state?.injail.includes(username) == true ?
                     <div>
                         IN JAIL
-                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
+                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{diceRolled?"End turn":"Roll dice"}</button>
                         {/* <br></br> */}
-                        <button onClick={()=>{ jailRelase()} } className={`white-button`}>{gamecontrol?.diceRolled?null:"Pay fine of 50"}</button>
+                        <button onClick={()=>{ jailRelase()} } className={`white-button`}>{diceRolled?null:"Pay fine of 50"}</button>
                     </div>
                     :
                     <div className='flex flex-col gap-2'>
                         
-                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
+                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{diceRolled?"End turn":"Roll dice"}</button>
 
                         {isTileBuyable(playerPosition, game_state?.gamestate) ? (
                             <button onClick={() => buyProperty()} className='white-button'>Buy Property</button>
