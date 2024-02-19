@@ -22,6 +22,7 @@ export async function POST(request) {
         const gameStateJSON = await redis.call('JSON.GET', `room:${roomID}`, '$')
         const gameState = JSON.parse(gameStateJSON)[0]
 
+
         //  check if game is present
         if (!gameState) {
             return new Response(JSON.stringify({ message: 'game not present', success: false }));
@@ -36,13 +37,33 @@ export async function POST(request) {
 
         } else {
 
-            let updatedUsers = gameState.users.filter((val) => val != u_name)
             if (gameState?.gamestate[u_name]) {
 
-                const tx = redis.multi()
-                tx.call('JSON.DEL', `room:${roomID}`, `$.gamestate.${u_name}`)
-                tx.call('JSON.SET', `room:${roomID}`, '$.users', JSON.stringify(updatedUsers))
-                const res = await tx.exec()
+                let updatedUsers = gameState.users.filter((val) => val != u_name)
+                let currentIndex
+
+                gameState.users.forEach((name, i) => {
+                    if (name == u_name) {
+                        currentIndex = i
+                    }
+                });
+
+                if (currentIndex == gameState.current) {
+
+                    const nextPlayerIndex = (currentIndex+1)%(gameState.users.length)
+                    const tx = redis.multi()
+                    tx.call('JSON.DEL', `room:${roomID}`, `$.gamestate.${u_name}`)
+                    tx.call('JSON.SET', `room:${roomID}`, '$.current', nextPlayerIndex)
+                    tx.call('JSON.SET', `room:${roomID}`, '$.users', JSON.stringify(updatedUsers))
+                    const res = await tx.exec()
+
+                } else {
+
+                    const tx = redis.multi()
+                    tx.call('JSON.DEL', `room:${roomID}`, `$.gamestate.${u_name}`)
+                    tx.call('JSON.SET', `room:${roomID}`, '$.users', JSON.stringify(updatedUsers))
+                    const res = await tx.exec()
+                }
             }
         }
         await redis.quit()

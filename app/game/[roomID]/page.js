@@ -27,13 +27,11 @@ const page = () => {
     staleTime: 0
   })
 
-
   if (result?.data?.data?.success) {
       game_state = JSON.parse(result?.data?.data?.res)[0]
       gameState.current = game_state.gamestate
   }
   if(result.isError && roomID){
-      result.
       router.push('/room')
   }
 
