@@ -7,6 +7,7 @@ import { QueryClient, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useParams } from 'next/navigation'
 import { toast } from 'react-toastify'
 import useUser from '@/hooks/useUser'
+import { supabaseRealTime } from '@/lib/supabase/realtime'
 
 export const RealtimeContext = createContext()
 
@@ -24,7 +25,7 @@ const displayToast = (text) => {
 }
 
 const RealtimeProvider = ({ children }) => {
-
+    const { messages, setMessages} = useStore()
     const { roomID } = useParams()
     const user = useUser();
     const username = user?.data?.display_name.replace(" ","")
@@ -36,9 +37,14 @@ const RealtimeProvider = ({ children }) => {
     const queryClient = useQueryClient();
 
     useEffect(() => {
-        channelRef.current =  roomID ? supabase.channel(roomID) : null
+        
+        channelRef.current =  roomID ? supabase.channel(roomID, {
+            config: {
+              broadcast: { self: true },
+            },
+          }) : null
+        
         if (channelRef.current) {
-
             const sub = channelRef.current.on(
                 'broadcast',
                 { event: 'joinroom' },
@@ -81,6 +87,29 @@ const RealtimeProvider = ({ children }) => {
                     (payload) => {
                         queryClient.invalidateQueries(['game'])
                         console.log("broadcast bought prop: ", payload.payload.message)
+                    }
+                )
+                .on(
+                    'broadcast',
+                    { event: 'handlelanding' },
+                    (payload) => {
+                        queryClient.invalidateQueries(['game'])
+                        console.log(payload.payload.message)
+                    }
+                )
+                .on(
+                    'broadcast',
+                    { event: 'message' },
+                    (payload) => {
+                        setMessages(payload.payload.message)
+                    }
+                )
+                .on(
+                    'broadcast',
+                    { event: 'jailrelease' },
+                    (payload) => {
+                        queryClient.invalidateQueries(['game'])
+                        console.log(payload.payload.message)
                     }
                 )
                 .subscribe()

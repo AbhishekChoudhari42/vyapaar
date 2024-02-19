@@ -18,7 +18,7 @@ export async function POST(request){
         }
 
         const tx = redis.multi();
-        tx.call('JSON.SET',`room:${roomID}`,'$',JSON.stringify({current:0,gamestate:{[u_name]:val},users:[u_name]}))
+        tx.call('JSON.SET',`room:${roomID}`,'$',JSON.stringify({current:0,gamestate:{[u_name]:val},users:[u_name],injail:[]}))
         tx.set(`gamestart:${roomID}`,0)
         const res = await tx.exec()
 

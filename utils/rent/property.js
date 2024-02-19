@@ -15,6 +15,4 @@ export default async function propertyRent(currentUser, property,users){
         updatedBalanceOfProvider,
         updatedBalanceOfReceiver
     }
-
-    return response;
 }

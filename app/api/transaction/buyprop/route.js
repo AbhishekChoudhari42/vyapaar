@@ -18,7 +18,7 @@ export async function POST(request) {
         const toUpdate = JSON.stringify({
             "bal": currentPlayerState?.bal - currentTile?.cost,
             "pos": currentPlayerState?.pos,
-            "prop": [...currentPlayerState?.prop, currentTile?.name]
+            "prop": [...currentPlayerState?.prop, currentPlayerState?.pos]
         })
         console.log(toUpdate)
         const resp = await redis.call("JSON.SET", `room:${roomID}`, "$.gamestate."+currentPlayer, toUpdate);
@@ -28,6 +28,8 @@ export async function POST(request) {
             event: 'buyprop',
             payload: { message: "some prop bought" },
         })
+
+        redis.quit();
 
         return new Response(JSON.stringify(resp));
     } catch (error) {

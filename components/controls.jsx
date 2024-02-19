@@ -9,25 +9,30 @@ import useUser from '@/hooks/useUser'
 import tabledata from '@/lib/constant/tabledata'
 import userSlice from '@/store/slices/userSlice'
 import checkBuyable from '@/utils/checkBuyable'
-// import { findowner } from '@/utils/checkowner'
 
 const Controls = ({roomID, gameState, game_state}) => {
+    const { diceRolled,setDiceRolled,currentTurn } = useStore();
+    
 
-    const [ gamecontrol, setGameControl ] = useState({ currentTurn: true , diceRolled:false, buyable: false})
+    // const [ gamecontrol, setGameControl ] = useState({ diceRolled:false})
     const [dice, setDice] = useState();
 
     const user = useUser();
+    const username = user.data.display_name.replace(" ","");
     const supabase = supabaseBrowser()
-
-    //current player position
     
 
     const rollDice = async (setGamecontrol) => {
+        // setDiceRolled();
+        // console.log(diceRolled, "DICEEEEEE")
         const result = await axios.post("/api/dice",{roomID});
         const {diceRoll} = result.data;
-        setGameControl(prevGameControl=>({
-            ...prevGameControl, diceRolled: true
-        }))
+        setDiceRolled();
+        //setting diceRolled to true here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: true
+        // }))
+
         setDice(diceRoll?.diceRoll1+diceRoll?.diceRoll2);
         console.log("player rolled")
         return diceRoll;
@@ -43,7 +48,8 @@ const Controls = ({roomID, gameState, game_state}) => {
     })
 
     const handleButtons = () =>{
-        if(gamecontrol.diceRolled){
+        //checking if dircRolled true here
+        if(diceRolled){
             endTurn()
         }
         else{
@@ -52,7 +58,7 @@ const Controls = ({roomID, gameState, game_state}) => {
     }
 
     const hasRolled = () =>{
-        const username = user.data.display_name;
+        
         if(username.replace(" ","") == game_state.users[game_state.current]){
             return true;
         }
@@ -61,44 +67,42 @@ const Controls = ({roomID, gameState, game_state}) => {
 
     const endTurn = async () => {
         const result = await axios.post("/api/endturn",{roomID});
-
-        setGameControl(prevGameControl=>({
-            ...prevGameControl, diceRolled: false
-        }))
+        //setting diceRolled false here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: false
+        // }))
+        setDiceRolled();
         // API call with Transaction details if transaction required
         // changes current user turn to user next username
     }
-    
-    function isTileBuyable(tileName,tileKey, playerState) {
+
+    function isTileBuyable(tileKey, playerState) {
         const nonBuyableTileKeys = [0, 2, 4, 7, 10, 17, 20, 22, 30, 33, 36, 38];
         const isNonBuyableTile = nonBuyableTileKeys.includes(tileKey); //if true, not buyable
-        console.log(tileKey)
     
         for (const playerName in playerState) {
             const playerProps = playerState[playerName].prop;
-            if (playerProps.includes(tileName) || isNonBuyableTile) {
+            if (playerProps?.includes(tileKey) || isNonBuyableTile) {
                 // console.log(`${playerName} owns ${tileName}`);
                 return false; // Property is owned, not buyable
             }
         }
-    
         return true; // Tile is buyable
     }
-    
-
-    useEffect(()=>{
-
-        if(gamecontrol.diceRolled){
- 
-            // console.log(user.data.display_name," landed on",playerPosition," at ",tabledata[playerPosition]?.type)
-        }
-        
-    },[gamecontrol])
 
     let playerPosition = (game_state?.gamestate[user.data.display_name.replace(" ","")].pos);
 
     const buyProperty = async () =>{
-        const result = await axios.post("/api/transaction/buyprop",{roomID});
+        await axios.post("/api/transaction/buyprop",{roomID});
+    }
+
+    const jailRelase = async () =>{
+        await axios.post("/api/transaction/jailrelease", {roomID})
+        //setting diceRolled to false here
+        // setGameControl(prevGameControl=>({
+        //     ...prevGameControl, diceRolled: false
+        // }))
+        setDiceRolled();
     }
     
     return (
@@ -108,26 +112,23 @@ const Controls = ({roomID, gameState, game_state}) => {
                 <div className='absolute top-6 rounded-md left-1/2 -translate-x-1/2 w-20 h-20 text-white font-semibold text-6xl border-[1px] flex justify-center items-center'>
                     {6}
                 </div>
-                {
-                    gamecontrol?.currentTurn &&
+                {   //checking gamecontrol on currentTurn, diceRolled bellow
+                    currentTurn == true && game_state?.injail.includes(username) == true ?
+                    <div>
+                        IN JAIL
+                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{diceRolled?"End turn":"Roll dice"}</button>
+                        {/* <br></br> */}
+                        <button onClick={()=>{ jailRelase()} } className={`white-button`}>{diceRolled?null:"Pay fine of 50"}</button>
+                    </div>
+                    :
                     <div className='flex flex-col gap-2'>
-                        {/* <button onClick={() => { mutateAsync() }} className={`white-button ${gamecontrol?.diceRolled ? 'fade' :''}`}>Roll dice</button> */}
                         
-                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{gamecontrol.diceRolled?"End turn":"Roll dice"}</button>
+                        <button onClick={() => { mutateAsync() }} className={`white-button`}>{diceRolled?"End turn":"Roll dice"}</button>
 
-                        
-                        {/* {checkBuyable(playerPosition)?"":<button onClick={() => { buyProperty() }} className='white-button'>Buy Property</button>}  */}
-
-                        {isTileBuyable(tabledata[playerPosition]?.name, playerPosition, game_state?.gamestate) ? (
+                        {isTileBuyable(playerPosition, game_state?.gamestate) ? (
                             <button onClick={() => buyProperty()} className='white-button'>Buy Property</button>
                         ) : null}
 
-
-                        {/* <button onClick={() => { buyProperty() }} className={`white-button ${checkBuyable(playerPosition)? 'fade' :''}`}>Buy Property</button> */}
-                        
-                        {/* <h1>Landed on: {tabledata[(game_state?.gamestate[user.data.display_name.replace(" ","")].pos+dice)%40]?.name}</h1> */}
-                        {/* <h1>{checkBuyable((game_state?.gamestate[user.data.display_name.replace(" ","")].pos+dice)%40)?"Can Buy":"Not Buyable"}</h1> */}
-                        {/* {findowner(game_state?.gamestate, "abc")} */}
                     </div>
                 }
             </div>
@@ -136,5 +137,3 @@ const Controls = ({roomID, gameState, game_state}) => {
 }
 
 export default Controls
-
-//Todo: Rent and Tax and Special Cards
